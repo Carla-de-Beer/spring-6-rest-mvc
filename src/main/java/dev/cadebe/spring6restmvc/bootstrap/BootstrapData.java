@@ -18,9 +18,9 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
+import static dev.cadebe.spring6restmvc.model.BeerStyle.*;
 
 @Component
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class BootstrapData implements CommandLineRunner {
         if (beerRepository.count() == 0) {
             val beer1 = BeerEntity.builder()
                     .beerName("Galaxy Cat")
-                    .beerStyle(BeerStyle.PALE_ALE)
+                    .beerStyle(PALE_ALE)
                     .upc("12356")
                     .price(new BigDecimal("12.99"))
                     .quantityOnHand(122)
@@ -50,7 +50,7 @@ public class BootstrapData implements CommandLineRunner {
 
             val beer2 = BeerEntity.builder()
                     .beerName("Crank")
-                    .beerStyle(BeerStyle.PALE_ALE)
+                    .beerStyle(PALE_ALE)
                     .upc("12356222")
                     .price(new BigDecimal("11.99"))
                     .quantityOnHand(392)
@@ -58,7 +58,7 @@ public class BootstrapData implements CommandLineRunner {
 
             val beer3 = BeerEntity.builder()
                     .beerName("Sunshine City")
-                    .beerStyle(BeerStyle.IPA)
+                    .beerStyle(IPA)
                     .upc("12356")
                     .price(new BigDecimal("13.99"))
                     .quantityOnHand(144)
@@ -95,18 +95,18 @@ public class BootstrapData implements CommandLineRunner {
 
     private static BeerStyle getBeerStyle(BeerCsv beerCsv) {
         return switch (beerCsv.getStyle()) {
-            case "American IPA", "American Double / Imperial IPA", "Belgian IPA" -> BeerStyle.IPA;
-            case "Oatmeal Stout", "American Stout", "Milk / Sweet Stout", "Schwarzbier" -> BeerStyle.STOUT;
-            case "American Porter", "Baltic Porter" -> BeerStyle.PORTER;
-            case "Saison / Farmhouse Ale" -> BeerStyle.SAISON;
-            case "Cider" -> BeerStyle.CIDER;
+            case "American IPA", "American Double / Imperial IPA", "Belgian IPA" -> IPA;
+            case "Oatmeal Stout", "American Stout", "Milk / Sweet Stout", "Schwarzbier" -> STOUT;
+            case "American Porter", "Baltic Porter" -> PORTER;
+            case "Saison / Farmhouse Ale" -> SAISON;
+            case "Cider" -> CIDER;
             case "Fruit / Vegetable Beer", "Berliner Weissbier", "Altbier", "Winter Warmer", "Hefeweizen", "Rauchbier" ->
-                    BeerStyle.WHEAT;
-            case "German Pilsener", "Czech Pilsener" -> BeerStyle.PILSNER;
+                    WHEAT;
+            case "German Pilsener", "Czech Pilsener" -> PILSNER;
             case "American Pale Lager", "Vienna Lager", "Euro Pale Lager", "Munich Helles Lager", "Dortmunder / Export Lager", "American Adjunct Lager" ->
-                    BeerStyle.LAGER;
-            case "Extra Special / Strong Bitter (ESB)" -> BeerStyle.BITTER;
-            default -> BeerStyle.ALE;
+                    LAGER;
+            case "Extra Special / Strong Bitter (ESB)" -> BITTER;
+            default -> ALE;
         };
     }
 

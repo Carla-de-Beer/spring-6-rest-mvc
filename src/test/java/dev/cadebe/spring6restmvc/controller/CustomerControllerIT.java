@@ -1,6 +1,5 @@
 package dev.cadebe.spring6restmvc.controller;
 
-import dev.cadebe.spring6restmvc.data.CustomerEntity;
 import dev.cadebe.spring6restmvc.mappers.CustomerMapper;
 import dev.cadebe.spring6restmvc.model.CustomerDto;
 import dev.cadebe.spring6restmvc.repositories.CustomerRepository;
@@ -111,6 +110,8 @@ class CustomerControllerIT {
 
         assertThrows(NotFoundException.class, () -> customerController.updateCustomerById(id, customer));
     }
+
+    // TODO: Add patch test
 
     @Test
     @Transactional

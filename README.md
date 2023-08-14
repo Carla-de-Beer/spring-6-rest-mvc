@@ -25,6 +25,5 @@ https://www.udemy.com/course/spring-framework-6-beginner-to-guru/learn/lecture/3
 
 * Java 17
 * Spring Boot 3.1.2
-* Maven 3.8.1
 * JUnit 5
 * MySQL 8.0

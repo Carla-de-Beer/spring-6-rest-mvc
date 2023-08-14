@@ -1,6 +1,7 @@
 package dev.cadebe.spring6restmvc.controller;
 
 import dev.cadebe.spring6restmvc.model.BeerDto;
+import dev.cadebe.spring6restmvc.model.BeerStyle;
 import dev.cadebe.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -23,8 +24,10 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping
-    public List<BeerDto> getBeers() {
-        return beerService.listBeers();
+    public List<BeerDto> getBeers(@RequestParam(required = false) String beerName,
+                                  @RequestParam(required = false) BeerStyle beerStyle,
+                                  @RequestParam(required = false) Boolean showInventory) {
+        return beerService.listBeers(beerName, beerStyle, showInventory);
     }
 
     @GetMapping("{beerId}")

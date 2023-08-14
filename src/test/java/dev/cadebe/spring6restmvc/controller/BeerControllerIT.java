@@ -7,6 +7,7 @@ import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
 import dev.cadebe.spring6restmvc.repositories.BeerRepository;
 import lombok.val;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.hamcrest.core.Is.is;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,7 +59,7 @@ class BeerControllerIT {
 
     @Test
     void shouldGetBeerList() {
-        val beers = beerController.getBeers();
+        val beers = beerController.getBeers(null, null, false);
 
         assertThat(beers).hasSize(2413);
     }
@@ -68,7 +69,7 @@ class BeerControllerIT {
     @Rollback
     void shouldReturnEmptyListIfNoBeersFound() {
         beerRepository.deleteAll();
-        val beers = beerController.getBeers();
+        val beers = beerController.getBeers(null, null, false);
 
         assertThat(beers).isEmpty();
     }
@@ -79,6 +80,64 @@ class BeerControllerIT {
         val found = beerController.getBeerById(beerMapper.toModel(beer).getId());
 
         assertThat(found).isNotNull();
+    }
+
+    @Test
+    void shouldGetBeerByName() throws Exception {
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerName", "%IPA%"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(336)))
+                .andExpect(jsonPath("$.[0].beerName", is("21st Amendment IPA (2006)")))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
+    void shouldGetBeerByBeerStyle() throws Exception {
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerStyle", "PORTER"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(74)))
+                .andExpect(jsonPath("$.[0].beerStyle", is("PORTER")))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
+    void shouldGetBeerByBeerNameAndBeerStyle() throws Exception {
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerName", "%american%")
+                        .queryParam("beerStyle", "ALE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(26)))
+                .andExpect(jsonPath("$.[0].beerName", is("Bitter American")))
+                .andExpect(jsonPath("$.[0].beerStyle", is("ALE")))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
+    void shouldGetBeerByBeerNameAndBeerStyleAndNotShowInventoryFalse() throws Exception {
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerName", "%american%")
+                        .queryParam("beerStyle", "ALE")
+                        .queryParam("showInventory", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(26)))
+                .andExpect(jsonPath("$.[0].beerName", is("Bitter American")))
+                .andExpect(jsonPath("$.[0].beerStyle", is("ALE")))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+    }
+
+    @Test
+    void shouldGetBeerByBeerNameAndBeerStyleAndShowInventoryTrue() throws Exception {
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerName", "%american%")
+                        .queryParam("beerStyle", "ALE")
+                        .queryParam("showInventory", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(26)))
+                .andExpect(jsonPath("$.[0].beerName", is("Bitter American")))
+                .andExpect(jsonPath("$.[0].beerStyle", is("ALE")))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
     }
 
     @Test
@@ -162,6 +221,8 @@ class BeerControllerIT {
 
         assertThrows(NotFoundException.class, () -> beerController.updateById(id, beer));
     }
+
+    // TODO: Add patch test
 
     @Test
     @Transactional

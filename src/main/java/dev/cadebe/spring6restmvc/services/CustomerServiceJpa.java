@@ -50,6 +50,7 @@ public class CustomerServiceJpa implements CustomerService {
         return customerReference.get();
     }
 
+    // TODO
     @Override
     public void patchCustomerById(UUID customerId, CustomerDto customer) {
 

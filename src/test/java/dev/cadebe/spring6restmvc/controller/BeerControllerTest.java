@@ -55,29 +55,30 @@ class BeerControllerTest {
         val id1 = UUID.randomUUID();
         val id2 = UUID.randomUUID();
 
-        when(beerService.listBeers()).thenReturn(List.of(
-                BeerDto.builder()
-                        .id(id1)
-                        .version(1)
-                        .beerName("Galaxy Cat")
-                        .beerStyle(PALE_ALE)
-                        .upc("12345")
-                        .price(new BigDecimal("12.99"))
-                        .quantityOnHand(122)
-                        .createdDate(LocalDateTime.now())
-                        .updatedDate(LocalDateTime.now())
-                        .build(),
-                BeerDto.builder()
-                        .id(id2)
-                        .version(1)
-                        .beerName("Crank")
-                        .beerStyle(IPA)
-                        .upc("67890")
-                        .price(new BigDecimal("7.99"))
-                        .quantityOnHand(392)
-                        .createdDate(LocalDateTime.now())
-                        .updatedDate(LocalDateTime.now())
-                        .build()));
+        when(beerService.listBeers(any(), any(), any())).thenReturn(
+                List.of(
+                        BeerDto.builder()
+                                .id(id1)
+                                .version(1)
+                                .beerName("Galaxy Cat")
+                                .beerStyle(PALE_ALE)
+                                .upc("12345")
+                                .price(new BigDecimal("12.99"))
+                                .quantityOnHand(122)
+                                .createdDate(LocalDateTime.now())
+                                .updatedDate(LocalDateTime.now())
+                                .build(),
+                        BeerDto.builder()
+                                .id(id2)
+                                .version(1)
+                                .beerName("Crank")
+                                .beerStyle(IPA)
+                                .upc("67890")
+                                .price(new BigDecimal("7.99"))
+                                .quantityOnHand(392)
+                                .createdDate(LocalDateTime.now())
+                                .updatedDate(LocalDateTime.now())
+                                .build()));
 
         mockMvc.perform(get(BeerController.BASE_URL)
                         .accept(MediaType.APPLICATION_JSON))

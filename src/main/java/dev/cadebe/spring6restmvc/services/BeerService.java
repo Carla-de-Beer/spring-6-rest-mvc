@@ -1,6 +1,7 @@
 package dev.cadebe.spring6restmvc.services;
 
 import dev.cadebe.spring6restmvc.model.BeerDto;
+import dev.cadebe.spring6restmvc.model.BeerStyle;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public interface BeerService {
 
-    List<BeerDto> listBeers();
+    List<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory);
 
     Optional<BeerDto> getBeerbyId(UUID id);
 
