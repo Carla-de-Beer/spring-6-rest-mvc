@@ -4,9 +4,9 @@
 
 A Spring 6 demo project accessing a MySQL database to read and update beer-related data. An additional H2 in-memory
 database is also
-connected and is used for the integration tests.
+connected and is used to run the integration tests (under the "default" profile).
 
-Steps required to run the application with MySql:
+Steps required to run the application with MySQL:
 
 * Spin up a MySQL Docker container with the following command:
 
@@ -15,7 +15,7 @@ Steps required to run the application with MySql:
     ```
 * With a suitable database workbench, manually create the required database schema and operational user with the script
   provided in `src/scripts/mysql-init.sql`.
-* Use the `mylocalsql` profile when excuting the main class in order to have the database managed by Flyway, and
+* Use the `localmysql` profile when excuting the main class in order to have the database managed by Flyway, and
   validated by Hiberate. Additional beer data entries are added to the database by means of a CSV upload.
 
 The project is based on the following Spring Framework Guru Udemy tutorial:
@@ -26,6 +26,5 @@ https://www.udemy.com/course/spring-framework-6-beginner-to-guru/learn/lecture/3
 * Java 17
 * Spring Boot 3.1.2
 * Maven 3.8.1
-* MySQL 8.0
 * JUnit 5
-
+* MySQL 8.0
