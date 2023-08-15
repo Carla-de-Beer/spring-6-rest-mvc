@@ -13,6 +13,7 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -55,39 +56,40 @@ class BeerControllerTest {
         val id1 = UUID.randomUUID();
         val id2 = UUID.randomUUID();
 
-        when(beerService.listBeers(any(), any(), any())).thenReturn(
-                List.of(
-                        BeerDto.builder()
-                                .id(id1)
-                                .version(1)
-                                .beerName("Galaxy Cat")
-                                .beerStyle(PALE_ALE)
-                                .upc("12345")
-                                .price(new BigDecimal("12.99"))
-                                .quantityOnHand(122)
-                                .createdDate(LocalDateTime.now())
-                                .updatedDate(LocalDateTime.now())
-                                .build(),
-                        BeerDto.builder()
-                                .id(id2)
-                                .version(1)
-                                .beerName("Crank")
-                                .beerStyle(IPA)
-                                .upc("67890")
-                                .price(new BigDecimal("7.99"))
-                                .quantityOnHand(392)
-                                .createdDate(LocalDateTime.now())
-                                .updatedDate(LocalDateTime.now())
-                                .build()));
+        when(beerService.listBeers(any(), any(), any(), any(), any())).thenReturn(
+                new PageImpl<>(
+                        List.of(
+                                BeerDto.builder()
+                                        .id(id1)
+                                        .version(1)
+                                        .beerName("Galaxy Cat")
+                                        .beerStyle(PALE_ALE)
+                                        .upc("12345")
+                                        .price(new BigDecimal("12.99"))
+                                        .quantityOnHand(122)
+                                        .createdDate(LocalDateTime.now())
+                                        .updatedDate(LocalDateTime.now())
+                                        .build(),
+                                BeerDto.builder()
+                                        .id(id2)
+                                        .version(1)
+                                        .beerName("Crank")
+                                        .beerStyle(IPA)
+                                        .upc("67890")
+                                        .price(new BigDecimal("7.99"))
+                                        .quantityOnHand(392)
+                                        .createdDate(LocalDateTime.now())
+                                        .updatedDate(LocalDateTime.now())
+                                        .build())));
 
         mockMvc.perform(get(BeerController.BASE_URL)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$.[0].id", is(id1.toString())))
-                .andExpect(jsonPath("$.[1].id", is(id2.toString())))
-                .andExpect(jsonPath("$..beerName", is(List.of("Galaxy Cat", "Crank"))));
+                .andExpect(jsonPath("$.content.length()", is(2)))
+                .andExpect(jsonPath("$.content.[0].id", is(id1.toString())))
+                .andExpect(jsonPath("$.content.[1].id", is(id2.toString())))
+                .andExpect(jsonPath("$.content..beerName", is(List.of("Galaxy Cat", "Crank"))));
     }
 
     @Test

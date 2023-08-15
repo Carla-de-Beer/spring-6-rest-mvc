@@ -6,11 +6,14 @@ import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
 import dev.cadebe.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -20,30 +23,57 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class BeerServiceJpa implements BeerService {
 
+    private static final int DEFAULT_PAGE_NUMBER = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
     @Override
-    public List<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
-        List<BeerEntity> beerList;
+    public Page<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
+        val pageRequest = buildPageRequest(pageNumber, pageSize);
+        Page<BeerEntity> beerPage;
 
         if (StringUtils.hasText(beerName) && beerStyle == null) {
-            beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+            beerPage = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", null);
         } else if (beerStyle != null && !StringUtils.hasText(beerName)) {
-            beerList = beerRepository.findAllByBeerStyle(beerStyle);
+            beerPage = beerRepository.findAllByBeerStyle(beerStyle, null);
         } else if (StringUtils.hasText(beerName) && beerStyle != null) {
-            beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle);
+            beerPage = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle, null);
         } else {
-            beerList = beerRepository.findAll();
+            beerPage = beerRepository.findAll(pageRequest);
         }
 
         if (showInventory != null && !showInventory) {
-            beerList.forEach(beerEntity -> beerEntity.setQuantityOnHand(null));
+            beerPage.forEach(beerEntity -> beerEntity.setQuantityOnHand(null));
         }
 
-        return beerList.stream()
-                .map(beerMapper::toModel)
-                .toList();
+        return beerPage.map(beerMapper::toModel);
+    }
+
+    private static PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if (pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber - 1;
+        } else {
+            queryPageNumber = DEFAULT_PAGE_NUMBER;
+        }
+
+        if (pageSize == null) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if (pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        val sort = Sort.by(Sort.Order.asc("beerName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
     }
 
     @Override

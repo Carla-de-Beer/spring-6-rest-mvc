@@ -58,7 +58,7 @@ class BeerRepositoryTest {
 
     @Test
     void shouldFindAllBeersByBeerName() {
-        val beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%");
+        val beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%", null).getContent();
 
         assertThat(beerList).hasSize(336);
         assertThat(beerList.subList(0, 3))
@@ -71,7 +71,7 @@ class BeerRepositoryTest {
 
     @Test
     void shouldFindAllBeersByBeerStyle() {
-        val beerList = beerRepository.findAllByBeerStyle(PORTER);
+        val beerList = beerRepository.findAllByBeerStyle(PORTER, null).getContent();
 
         assertThat(beerList).hasSize(74);
         assertThat(beerList.subList(0, 3))
@@ -84,7 +84,7 @@ class BeerRepositoryTest {
 
     @Test
     void shouldFindAllBeersByBeerNameAndBeerStyle() {
-        val beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%american%", ALE);
+        val beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%american%", ALE, null).getContent();
 
         assertThat(beerList).hasSize(26);
         assertThat(beerList.subList(0, 3))

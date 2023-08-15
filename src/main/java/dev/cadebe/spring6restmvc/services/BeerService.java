@@ -2,14 +2,14 @@ package dev.cadebe.spring6restmvc.services;
 
 import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface BeerService {
 
-    List<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory);
+    Page<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize);
 
     Optional<BeerDto> getBeerbyId(UUID id);
 

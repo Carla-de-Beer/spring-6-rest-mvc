@@ -2,17 +2,18 @@ package dev.cadebe.spring6restmvc.repositories;
 
 import dev.cadebe.spring6restmvc.data.BeerEntity;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface BeerRepository extends JpaRepository<BeerEntity, UUID> {
 
-    List<BeerEntity> findAllByBeerNameIsLikeIgnoreCase(String beerName);
+    Page<BeerEntity> findAllByBeerNameIsLikeIgnoreCase(String beerName, Pageable pageable);
 
-    List<BeerEntity> findAllByBeerStyle(BeerStyle beerStyle);
+    Page<BeerEntity> findAllByBeerStyle(BeerStyle beerStyle, Pageable pa1);
 
-    List<BeerEntity> findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle(String beerName, BeerStyle beerStyle);
+    Page<BeerEntity> findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle(String beerName, BeerStyle beerStyle, Pageable pageable);
 
 }
