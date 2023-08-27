@@ -1,9 +1,6 @@
 package dev.cadebe.spring6restmvc.data;
 
-import dev.cadebe.spring6restmvc.model.BeerStyle;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,9 +9,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,8 +21,8 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "beer")
-public class BeerEntity {
+@Table(name = "category")
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -35,48 +32,37 @@ public class BeerEntity {
     private UUID id;
 
     @Version
-    private Integer version;
+    private Long version;
 
-    @NotNull
-    @NotBlank
     @Size(max = 50)
     @Column(length = 50)
-    private String beerName;
-
-    @NotNull
-    private BeerStyle beerStyle;
-
-    @NotNull
-    @NotBlank
-    @Size(max = 255)
-    private String upc;
-
-    @NotNull
-    private BigDecimal price;
-
-    private Integer quantityOnHand;
+    private String description;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
+    @Column(updatable = false)
     private LocalDateTime updatedDate;
 
     @Builder.Default
-    @OneToMany(mappedBy = "beer")
-    private Set<BeerOrderLineEntity> beerOrderLines = new HashSet<>();
-
-    @Builder.Default
     @ManyToMany
-    @JoinTable(name = "beer_category",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "beer_id")
+    @JoinTable(name = "beer_category", joinColumns = @JoinColumn(name = "beer_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<CategoryEntity> categories = new HashSet<>();
+    private Set<BeerEntity> beers = new HashSet<>();
 
-    public void addCategory(CategoryEntity category) {
-        this.categories.add(category);
-        category.getBeers().add(this);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryEntity that = (CategoryEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(version, that.version) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updatedDate, that.updatedDate) && Objects.equals(beers, that.beers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, version, description, createdDate, updatedDate, beers);
     }
 }

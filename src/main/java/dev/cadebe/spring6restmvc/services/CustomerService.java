@@ -16,7 +16,7 @@ public interface CustomerService {
 
     Optional<CustomerDto> updateCustomerById(UUID customerId, CustomerDto customer);
 
-    void patchCustomerById(UUID customerId, CustomerDto customer);
+    Optional<CustomerDto> patchCustomerById(UUID customerId, CustomerDto customer);
 
     boolean deleteCustomerById(UUID customerId);
 }

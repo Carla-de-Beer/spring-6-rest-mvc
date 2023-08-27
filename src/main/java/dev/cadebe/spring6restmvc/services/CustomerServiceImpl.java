@@ -83,11 +83,15 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomerById(UUID customerId, CustomerDto customer) {
+    public Optional<CustomerDto> patchCustomerById(UUID customerId, CustomerDto customer) {
         val existing = customerMap.get(customerId);
 
         if (StringUtils.hasText(customer.getName())) {
             existing.setName(customer.getName());
+        }
+
+        if (StringUtils.hasText(customer.getEmail())) {
+            existing.setEmail(customer.getEmail());
         }
 
         if (customer.getCreatedDate() != null) {
@@ -101,6 +105,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getVersion() != null) {
             existing.setVersion(customer.getVersion());
         }
+
+        return Optional.of(existing);
     }
 
     @Override

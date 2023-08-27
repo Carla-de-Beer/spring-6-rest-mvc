@@ -6,6 +6,7 @@ import dev.cadebe.spring6restmvc.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,16 +45,44 @@ public class CustomerServiceJpa implements CustomerService {
 
         customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
             foundCustomer.setName(customer.getName());
+
+            customerRepository.save(foundCustomer);
             customerReference.set(Optional.of(customerMapper.toModel(foundCustomer)));
         }, () -> customerReference.set(Optional.empty()));
 
         return customerReference.get();
     }
 
-    // TODO
     @Override
-    public void patchCustomerById(UUID customerId, CustomerDto customer) {
+    public Optional<CustomerDto> patchCustomerById(UUID customerId, CustomerDto customer) {
+        AtomicReference<Optional<CustomerDto>> customerReference = new AtomicReference<>();
 
+        customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
+            if (StringUtils.hasText(customer.getName())) {
+                foundCustomer.setName(customer.getName());
+            }
+
+            if (StringUtils.hasText(customer.getEmail())) {
+                foundCustomer.setEmail(customer.getEmail());
+            }
+
+            if (customer.getCreatedDate() != null) {
+                foundCustomer.setCreatedDate(customer.getCreatedDate());
+            }
+
+            if (customer.getUpdatedDate() != null) {
+                foundCustomer.setUpdatedDate(customer.getUpdatedDate());
+            }
+
+            if (customer.getVersion() != null) {
+                foundCustomer.setVersion(customer.getVersion());
+            }
+
+            customerRepository.save(foundCustomer);
+            customerReference.set(Optional.of(customerMapper.toModel(foundCustomer)));
+        }, () -> customerReference.set(Optional.empty()));
+
+        return customerReference.get();
     }
 
     @Override

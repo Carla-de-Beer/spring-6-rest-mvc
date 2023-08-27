@@ -212,7 +212,7 @@ class BeerControllerTest {
         verify(beerService).updateBeerById(id, beer);
     }
 
-    static Stream<Arguments> shouldPathExistingBeerById() {
+    static Stream<Arguments> shouldPatchExistingBeerById() {
         return Stream.of(
                 Arguments.of(UUID.randomUUID(), BeerDto.builder()
                         .version(1)
@@ -252,7 +252,9 @@ class BeerControllerTest {
 
     @ParameterizedTest
     @MethodSource
-    void shouldPathExistingBeerById(UUID id, BeerDto beer) throws Exception {
+    void shouldPatchExistingBeerById(UUID id, BeerDto beer) throws Exception {
+        when(beerService.patchBeerById(id, beer)).thenReturn(Optional.of(beer));
+
         mockMvc.perform(patch(BeerController.BASE_URL + "/" + id)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -262,6 +264,21 @@ class BeerControllerTest {
         verify(beerService).patchBeerById(idCaptor.capture(), beerCaptor.capture());
         assertThat(idCaptor.getValue()).isEqualTo(id);
         assertThat(beerCaptor.getValue()).isEqualTo(beer);
+    }
+
+    @Test
+    void shouldFailIfPatchExistingBeerByIdIsNotFound() throws Exception {
+        val id = UUID.randomUUID();
+        val beer = BeerDto.builder().build();
+        when(beerService.updateBeerById(id, beer)).thenReturn(Optional.empty());
+
+        mockMvc.perform(patch(BeerController.BASE_URL + "/" + id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isNotFound());
+
+        verify(beerService).patchBeerById(id, beer);
     }
 
     @Test

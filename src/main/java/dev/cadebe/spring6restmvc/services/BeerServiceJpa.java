@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,8 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class BeerServiceJpa implements BeerService {
 
+    static final int DEFAULT_PAGE_SIZE = 25;
     private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 25;
 
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
@@ -96,6 +97,7 @@ public class BeerServiceJpa implements BeerService {
             foundBeer.setUpc(beer.getUpc());
             foundBeer.setPrice(beer.getPrice());
             foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+
             beerRepository.save(foundBeer);
             beerReference.set(Optional.of(beerMapper.toModel(foundBeer)));
         }, () -> beerReference.set(Optional.empty()));
@@ -103,10 +105,41 @@ public class BeerServiceJpa implements BeerService {
         return beerReference.get();
     }
 
-    // TODO
     @Override
-    public void patchBeerById(UUID beerId, BeerDto beer) {
+    public Optional<BeerDto> patchBeerById(UUID beerId, BeerDto beer) {
+        AtomicReference<Optional<BeerDto>> beerReference = new AtomicReference<>();
 
+        beerRepository.findById(beerId).ifPresentOrElse(foundBeer -> {
+            if (StringUtils.hasText(beer.getBeerName())) {
+                foundBeer.setBeerName(beer.getBeerName());
+            }
+
+            if (beer.getBeerStyle() != null) {
+                foundBeer.setBeerStyle(beer.getBeerStyle());
+            }
+
+            if (StringUtils.hasText(beer.getUpc())) {
+                foundBeer.setUpc(beer.getUpc());
+            }
+
+            if (beer.getPrice() != null) {
+                foundBeer.setPrice(beer.getPrice());
+            }
+
+            if (beer.getQuantityOnHand() != null) {
+                foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            }
+
+            if (StringUtils.hasText(beer.getUpc())) {
+                foundBeer.setUpc(beer.getUpc());
+            }
+
+            beerRepository.save(foundBeer);
+            beerReference.set(Optional.of(beerMapper.toModel(foundBeer)));
+
+        }, () -> beerReference.set(Optional.empty()));
+
+        return beerReference.get();
     }
 
     @Override

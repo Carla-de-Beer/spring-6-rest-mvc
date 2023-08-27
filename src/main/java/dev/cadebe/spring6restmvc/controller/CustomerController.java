@@ -54,7 +54,11 @@ public class CustomerController {
 
     @PatchMapping("{beerId}")
     public ResponseEntity<String> patchCustomerById(@PathVariable("beerId") UUID customerId, @RequestBody CustomerDto customer) {
-        customerService.patchCustomerById(customerId, customer);
+        val patchedCustomer = customerService.patchCustomerById(customerId, customer);
+
+        if (patchedCustomer.isEmpty()) {
+            throw new NotFoundException();
+        }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

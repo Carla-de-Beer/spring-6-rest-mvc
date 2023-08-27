@@ -108,7 +108,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDto beer) {
+    public Optional<BeerDto> patchBeerById(UUID beerId, BeerDto beer) {
         val existing = beerMap.get(beerId);
 
         if (StringUtils.hasText(beer.getBeerName())) {
@@ -117,6 +117,10 @@ public class BeerServiceImpl implements BeerService {
 
         if (beer.getBeerStyle() != null) {
             existing.setBeerStyle(beer.getBeerStyle());
+        }
+
+        if (StringUtils.hasText(beer.getUpc())) {
+            existing.setUpc(beer.getUpc());
         }
 
         if (beer.getPrice() != null) {
@@ -130,6 +134,8 @@ public class BeerServiceImpl implements BeerService {
         if (StringUtils.hasText(beer.getUpc())) {
             existing.setUpc(beer.getUpc());
         }
+
+        return Optional.of(existing);
     }
 
     @Override

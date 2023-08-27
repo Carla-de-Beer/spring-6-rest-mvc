@@ -60,7 +60,11 @@ public class BeerController {
 
     @PatchMapping("{beerId}")
     public ResponseEntity<String> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDto beer) {
-        beerService.patchBeerById(beerId, beer);
+        val patched = beerService.patchBeerById(beerId, beer);
+
+        if (patched.isEmpty()) {
+            throw new NotFoundException();
+        }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

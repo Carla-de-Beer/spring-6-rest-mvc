@@ -195,6 +195,8 @@ class CustomerControllerTest {
     @ParameterizedTest
     @MethodSource
     void shouldPatchExistingCustomerById(UUID id, CustomerDto customer) throws Exception {
+        when(customerService.patchCustomerById(id, customer)).thenReturn(Optional.of(customer));
+
         mockMvc.perform(patch(CustomerController.BASE_URL + "/" + id)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -204,6 +206,21 @@ class CustomerControllerTest {
         verify(customerService).patchCustomerById(idCaptor.capture(), customerCaptor.capture());
         assertThat(idCaptor.getValue()).isEqualTo(id);
         assertThat(customerCaptor.getValue()).isEqualTo(customer);
+    }
+
+    @Test
+    void shouldFailIfPatchExistingCustomerByIdIsNotFound() throws Exception {
+        val id = UUID.randomUUID();
+        val customer = CustomerDto.builder().build();
+        when(customerService.updateCustomerById(id, customer)).thenReturn(Optional.empty());
+
+        mockMvc.perform(patch(CustomerController.BASE_URL + "/" + id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isNotFound());
+
+        verify(customerService).patchCustomerById(id, customer);
     }
 
     @Test

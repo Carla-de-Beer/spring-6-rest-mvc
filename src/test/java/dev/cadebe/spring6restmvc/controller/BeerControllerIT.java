@@ -2,6 +2,7 @@ package dev.cadebe.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.cadebe.spring6restmvc.data.BeerEntity;
+import dev.cadebe.spring6restmvc.data.BeerOrderLineEntity;
 import dev.cadebe.spring6restmvc.mappers.BeerMapper;
 import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
@@ -10,6 +11,7 @@ import lombok.val;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
@@ -237,13 +239,14 @@ class BeerControllerIT {
     @Rollback
     void shouldUpdateExistingBeer() {
         val beer = beerRepository.findAll().get(0);
+        val id = beer.getId();
         val beerDto = beerMapper.toModel(beer);
         beerDto.setBeerName("UPDATED");
 
-        val result = beerController.updateById(beer.getId(), beerDto);
+        val result = beerController.updateById(id, beerDto);
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
 
-        val updatedBeer = beerRepository.findById(beer.getId());
+        val updatedBeer = beerRepository.findById(id);
 
         assertThat(updatedBeer.get())
                 .usingRecursiveComparison()
@@ -261,7 +264,43 @@ class BeerControllerIT {
         assertThrows(NotFoundException.class, () -> beerController.updateById(id, beer));
     }
 
-    // TODO: Add patch test
+    @Test
+    @MethodSource
+    @Transactional
+    @Rollback
+    void shouldPatchExistingBeer() {
+        val beer = beerRepository.findAll().get(0);
+        val id = beer.getId();
+        val beerDto = beerMapper.toModel(beer);
+
+        assertThat(beer)
+                .extracting(BeerEntity::getBeerName, BeerEntity::getBeerStyle, BeerEntity::getPrice, BeerEntity::getQuantityOnHand, BeerEntity::getUpc)
+                .containsExactly("Galaxy Cat", BeerStyle.PALE_ALE, new BigDecimal("12.99"), 122, "12356");
+
+        beerDto.setBeerName("Some new name");
+        beerDto.setBeerStyle(BeerStyle.CIDER);
+        beerDto.setPrice(new BigDecimal("9.78"));
+        beerDto.setQuantityOnHand(9999);
+        beerDto.setUpc("abc123");
+
+        val result = beerController.patchBeerById(id, beerDto);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        val patchedBeer = beerRepository.findById(id);
+
+        assertThat(patchedBeer.get())
+                .usingRecursiveComparison()
+                .ignoringFieldsOfTypes(LocalDateTime.class)
+                .isEqualTo(beerMapper.toEntity(beerDto));
+    }
+
+    @Test
+    void shouldFailPatchByIdIfBeerNotFound() {
+        val id = UUID.randomUUID();
+        val beer = BeerDto.builder().build();
+
+        assertThrows(NotFoundException.class, () -> beerController.patchBeerById(id, beer));
+    }
 
     @Test
     @Transactional

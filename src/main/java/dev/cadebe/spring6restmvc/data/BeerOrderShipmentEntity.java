@@ -1,6 +1,7 @@
 package dev.cadebe.spring6restmvc.data;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,8 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,8 +18,8 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "customer")
-public class CustomerEntity {
+@Table(name = "beer_order_shipment")
+public class BeerOrderShipmentEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -30,21 +29,18 @@ public class CustomerEntity {
     private UUID id;
 
     @Version
-    private Integer version;
+    private Long version;
 
-    private String name;
-
-    @Column(length = 255)
-    private String email;
+    @Size(max = 50)
+    @Column(length = 50)
+    private String trackingNumber;
 
     @CreationTimestamp
-    @Column(updatable = false)
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "customer")
-    private Set<BeerOrderEntity> beerOrders = new HashSet<>();
+    @OneToOne
+    private BeerOrderEntity beerOrder;
 }

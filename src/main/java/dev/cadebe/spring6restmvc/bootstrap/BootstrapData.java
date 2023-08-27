@@ -71,8 +71,7 @@ public class BootstrapData implements CommandLineRunner {
     private void loadCsvData() {
         if (beerRepository.count() < 10) {
             try {
-                File file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
-
+                var file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
                 var beerCsvList = beerCsvService.convertCsv(file);
 
                 val beers = beerCsvList.stream()
@@ -114,14 +113,17 @@ public class BootstrapData implements CommandLineRunner {
         if (customerRepository.count() == 0) {
             val customer1 = CustomerEntity.builder()
                     .name("Customer 1")
+                    .email("123@abc.com")
                     .build();
 
             val customer2 = CustomerEntity.builder()
                     .name("Customer 2")
+                    .email("456@def.com")
                     .build();
 
             val customer3 = CustomerEntity.builder()
                     .name("Customer 3")
+                    .email("789@ghi.com")
                     .build();
 
             customerRepository.saveAll(List.of(customer1, customer2, customer3));

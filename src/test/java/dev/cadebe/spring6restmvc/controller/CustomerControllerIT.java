@@ -1,6 +1,8 @@
 package dev.cadebe.spring6restmvc.controller;
 
+import dev.cadebe.spring6restmvc.data.CustomerEntity;
 import dev.cadebe.spring6restmvc.mappers.CustomerMapper;
+import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.CustomerDto;
 import dev.cadebe.spring6restmvc.repositories.CustomerRepository;
 import lombok.val;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,7 +114,39 @@ class CustomerControllerIT {
         assertThrows(NotFoundException.class, () -> customerController.updateCustomerById(id, customer));
     }
 
-    // TODO: Add patch test
+    @Test
+    @Transactional
+    @Rollback
+    void shouldPatchCustomerById() {
+        val customer = customerRepository.findAll().get(0);
+        val id = customer.getId();
+        val customerDto = customerMapper.toModel(customer);
+
+        assertThat(customer)
+                .extracting(CustomerEntity::getName, CustomerEntity::getEmail)
+                .containsExactly("Customer 1", "123@abc.com");
+
+        customerDto.setName("Some new custome name");
+        customerDto.setEmail("357@jkl.com");
+
+        val result = customerController.patchCustomerById(id, customerDto);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        val patched = customerRepository.findById(id);
+
+        assertThat(patched.get())
+                .usingRecursiveComparison()
+                .ignoringFieldsOfTypes(LocalDateTime.class)
+                .isEqualTo(customerMapper.toEntity(customerDto));
+    }
+
+    @Test
+    void shouldFailPatchByIdIfCustomerNotFound() {
+        val id = UUID.randomUUID();
+        val customer = CustomerDto.builder().build();
+
+        assertThrows(NotFoundException.class, () -> customerController.patchCustomerById(id, customer));
+    }
 
     @Test
     @Transactional
