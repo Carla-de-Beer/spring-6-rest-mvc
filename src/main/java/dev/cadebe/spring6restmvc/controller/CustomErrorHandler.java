@@ -1,6 +1,5 @@
 package dev.cadebe.spring6restmvc.controller;
 
-import jakarta.persistence.RollbackException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.val;
 import org.springframework.http.ResponseEntity;

@@ -11,7 +11,6 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,17 +51,4 @@ public class CategoryEntity {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<BeerEntity> beers = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(version, that.version) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updatedDate, that.updatedDate) && Objects.equals(beers, that.beers);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, version, description, createdDate, updatedDate, beers);
-    }
 }

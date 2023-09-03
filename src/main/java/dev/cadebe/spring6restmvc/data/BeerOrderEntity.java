@@ -73,8 +73,4 @@ public class BeerOrderEntity {
         this.beerOrderShipment = beerOrderShipment;
         beerOrderShipment.setBeerOrder(this);
     }
-
-    public boolean isNew() {
-        return id == null;
-    }
 }

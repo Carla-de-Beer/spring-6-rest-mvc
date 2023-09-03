@@ -265,7 +265,6 @@ class BeerControllerIT {
     }
 
     @Test
-    @MethodSource
     @Transactional
     @Rollback
     void shouldPatchExistingBeer() {

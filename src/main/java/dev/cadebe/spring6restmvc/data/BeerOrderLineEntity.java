@@ -46,8 +46,4 @@ public class BeerOrderLineEntity {
 
     @ManyToOne
     private BeerEntity beer;
-
-    public boolean isNew() {
-        return id == null;
-    }
 }

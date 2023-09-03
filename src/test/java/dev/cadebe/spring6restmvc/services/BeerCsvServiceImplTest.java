@@ -8,6 +8,8 @@ import org.springframework.util.ResourceUtils;
 import java.io.FileNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BeerCsvServiceImplTest {
 
@@ -62,5 +64,13 @@ class BeerCsvServiceImplTest {
         assertThat(beerList.get(beerList.size() - 1))
                 .usingRecursiveComparison()
                 .isEqualTo(expectedLast);
+    }
+
+    @Test
+    void shouldFailWhenFileNotFound() {
+        assertThrows(FileNotFoundException.class, () -> {
+            val file = ResourceUtils.getFile("classpath:csvdata/missing-file.csv");
+            beerCsvService.convertCsv(file);
+        });
     }
 }
