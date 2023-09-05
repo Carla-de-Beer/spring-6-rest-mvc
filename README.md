@@ -8,10 +8,10 @@ connected and is used to run the integration tests (under the "default" profile)
 
 Steps required to run the application with MySQL:
 
-* Spin up a MySQL Docker container with the following command:
+* Spin up a MySQL Docker container with the docker compose file:
 
     ```sh
-    docker run -p 3306:3306 --name mysql-rest-mvc -e MYSQL_ROOT_PASSWORD=<password> -d mysql:8.0
+    cd docker; docker compose up
     ```
 * With a suitable database workbench, manually create the required database schema and operational user with the script
   provided in `src/scripts/mysql-init.sql`.

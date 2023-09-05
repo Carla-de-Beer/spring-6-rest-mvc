@@ -1,0 +1,24 @@
+spring:
+  flyway:
+    enabled: false
+
+#  jpa:
+#    properties:
+#      jakarta:
+#        persistence:
+#          schema-generation:
+#            scripts:
+#              action: 'drop-and-create'
+#              create: 'metadata'
+#              drop-target: 'drop-and-create.sql'
+#              create-target: 'drop-and-create.sql'
+
+springdoc:
+  api-docs:
+    path: '/api-docs'
+
+logging:
+  level:
+    dev:
+      cadebe: debug
+
