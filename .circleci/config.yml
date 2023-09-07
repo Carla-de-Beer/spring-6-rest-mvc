@@ -1,24 +1,12 @@
 # Java Maven CircleCI 2.0 configuration file
-#
 # Check https://circleci.com/docs/2.0/language-java/ for more details
-#
+
 version: 2.1
+
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: cimg/openjdk:20.0.1
-
-        # Specify service dependencies here if necessary
-        # CircleCI maintains a library of pre-built images
-        # documented at https://circleci.com/docs/2.0/circleci-images/
-
-    #      - image: cimg/mysql:8.0
-    #        environment:
-    #          DB_ROOT_USER: root
-    #          DB_URL: jdbc:mysql://localhost:3306/restdb
-    #          DB_DRIVER: com.mysql.cj.jdbc.Driver
-    #          DB_PASS: root
 
     working_directory: ~/repo
 
@@ -38,27 +26,10 @@ jobs:
 
       - run: mvn dependency:go-offline
 
-      #      - run:
-      #          name: Waiting for MySQL to be ready
-      #          command: |
-      #            for i in `seq 1 30`;
-      #            do
-      #              nc -z 127.0.0.1 3306 && echo Success && exit 0
-      #              echo -n .
-      #              sleep 1
-      #            done
-      #            echo Failed waiting for MySQL && exit 1
-
-      #      #install mysql client
-      #      - run: sudo apt update
-      #      - run: sudo apt-get install mysql-client
-      #      # create database
-      #      - run: mysql -h 127.0.0.1 -u root -e "create database restdb"
-
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
-      # run tests!
+      # run tests
       - run: mvn integration-test

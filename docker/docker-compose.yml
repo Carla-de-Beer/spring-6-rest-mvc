@@ -1,12 +1,18 @@
-name: 'rest-mvc'
+name: rest-mvc
 
 services:
   mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+    image: rest-mvc-mysql
+    build:
+      context: .
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_PORT=${MYSQL_PORT}
     ports:
-      - '3306:3306'
+      - "${MYSQL_PORT}:3306"
     volumes:
       - mysql-db:/var/lib/mysql
 
