@@ -3,12 +3,13 @@ package dev.cadebe.spring6restmvc.services;
 import dev.cadebe.spring6restmvc.model.BeerCsv;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BeerCsvServiceImplTest {
@@ -16,8 +17,9 @@ class BeerCsvServiceImplTest {
     BeerCsvService beerCsvService = new BeerCsvServiceImpl();
 
     @Test
-    void shouldCreateListOfBeerCsvObjectsFromCsvFile() throws FileNotFoundException {
-        val file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
+    void shouldCreateListOfBeerCsvObjectsFromCsvFile() throws Exception {
+        ClassPathResource classPathResource = new ClassPathResource("csvdata/beers.csv");
+        InputStream inputStream = classPathResource.getInputStream();
 
         val expectedFirst = new BeerCsv();
         expectedFirst.setRow("1");
@@ -53,7 +55,7 @@ class BeerCsvServiceImplTest {
         expectedLast.setState("CO");
         expectedLast.setLabel("Rail Yard Ale (2009) (Wynkoop Brewing Company)");
 
-        val beerList = beerCsvService.convertCsv(file);
+        val beerList = beerCsvService.convertCsv(new InputStreamReader(inputStream));
 
         assertThat(beerList).hasSize(2410);
 
@@ -69,8 +71,9 @@ class BeerCsvServiceImplTest {
     @Test
     void shouldFailWhenFileNotFound() {
         assertThrows(FileNotFoundException.class, () -> {
-            val file = ResourceUtils.getFile("classpath:csvdata/missing-file.csv");
-            beerCsvService.convertCsv(file);
+            ClassPathResource classPathResource = new ClassPathResource("csvdata/missing-file.csv");
+            InputStream inputStream = classPathResource.getInputStream();
+            beerCsvService.convertCsv(new InputStreamReader(inputStream));
         });
     }
 }

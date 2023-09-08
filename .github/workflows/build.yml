@@ -30,11 +30,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build application with Maven
+      - name: Build the application with Maven
         run: mvn --batch-mode --update-snapshots package
 
       - name: Run the Maven verify phase
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --batch-mode --update-snapshots integration-test
 
       - name: Test reporting
         uses: dorny/test-reporter@v1

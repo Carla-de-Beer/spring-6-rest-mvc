@@ -11,11 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 
-import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -70,8 +71,10 @@ public class BootstrapData implements CommandLineRunner {
     private void loadCsvData() {
         if (beerRepository.count() < 10) {
             try {
-                var file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
-                var beerCsvList = beerCsvService.convertCsv(file);
+                val classPathResource = new ClassPathResource("csvdata/beers.csv");
+                val inputStream = classPathResource.getInputStream();
+
+                var beerCsvList = beerCsvService.convertCsv(new InputStreamReader(inputStream));
 
                 val beers = beerCsvList.stream()
                         .map(beerCsv -> BeerEntity.builder()
@@ -85,7 +88,7 @@ public class BootstrapData implements CommandLineRunner {
 
                 beerRepository.saveAll(beers);
 
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 throw new IllegalArgumentException("Csv file could not be found", e);
             }
         }

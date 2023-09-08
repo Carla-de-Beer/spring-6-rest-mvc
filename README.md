@@ -11,7 +11,7 @@ Steps required to run the application with MySQL:
 * Spin up a MySQL Docker container with the provide docker-compose file to create the MySql database container, initialised with the required schema and operational user:
 
     ```sh
-    cd docker; docker compose up
+    cd docker/docker-compose; docker compose up
     ```
 
 * Start the Spring Boot application with the `localmysql` profile when excuting the main class in order to have the database managed by Flyway, and
