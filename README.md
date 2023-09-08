@@ -1,6 +1,5 @@
 # Spring 6 REST MVC Project
-
-[![CircleCI](https://circleci.com/gh/Carla-de-Beer/spring-6-rest-mvc.svg?style=svg)](https://circleci.com/gh/Carla-de-Beer/pring-6-rest-mvc)
+![example workflow](https://github.com/Carla-de-Beer/spring-6-rest-mvc/actions/workflows/build.yml/badge.svg)
 
 A Spring 6 demo project accessing a MySQL database to read and update beer-related data. An additional H2 in-memory
 database is also
