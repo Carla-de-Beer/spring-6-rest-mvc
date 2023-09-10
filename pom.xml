@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
+        <start-class>dev.cadebe.spring6restmvc.Spring6RestMvcApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
@@ -122,6 +123,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <outputDirectory>${user.dir}/docker</outputDirectory>
                     <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
                     <excludes>
                         <exclude>
