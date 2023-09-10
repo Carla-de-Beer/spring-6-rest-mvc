@@ -129,6 +129,10 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <layers>
+                        <enabled>true</enabled>
+                        <configuration>${project.basedir}/docker/layers.xml</configuration>
+                    </layers>
                 </configuration>
             </plugin>
 
