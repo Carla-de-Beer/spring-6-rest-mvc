@@ -1,5 +1,5 @@
 # Spring 6 REST MVC Project
-![example workflow](https://github.com/Carla-de-Beer/spring-6-rest-mvc/actions/workflows/build.yml/badge.svg)
+![example event parameter](https://github.com/Carla-de-Beer/spring-6-rest-mvc/actions/workflows/build.yml/badge.svg?event=push)
 
 A Spring 6 demo project accessing a MySQL database to read and update beer-related data. An additional H2 in-memory
 database is also
@@ -16,12 +16,20 @@ Steps required to run the application with MySQL:
 * Start the Spring Boot application with the `localmysql` profile when excuting the main class in order to have the database managed by Flyway, and
   validated by Hiberate. Additional beer data entries are added to the database by means of a CSV upload.
 
-The project is based on the following Spring Framework Guru Udemy tutorial:
+The Java section of the project is based on the following Spring Framework Guru Udemy tutorial:
 https://www.udemy.com/course/spring-framework-6-beginner-to-guru/learn/lecture/33399792?start=15#overview
 
-## Requirements
+## Requirements for local execution
 
 * Java 17
 * Spring Boot 3.1.2
 * JUnit 5
 * MySQL 8.0
+
+## Docker
+
+The project image, currently operating with an H2 db, can be obtained from Docker Hub:
+
+```sh
+  docker image pull cadebe/spring-6-rest-mvc:latest
+```

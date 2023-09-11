@@ -1,2 +1,4 @@
 target
+*.md
+.git
 .DS_Store

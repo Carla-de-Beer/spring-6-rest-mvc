@@ -22,9 +22,17 @@ jobs:
     name: Build project
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      checks: write
+      security-events: write
+
     steps:
       - run: echo "Running unit tests for repository ${{ github.repository }}."
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -54,6 +62,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Run Trivy for HIGH,CRITICAL CVEs and report (blocking)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE }}
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
       - name: Docker build and push
         uses: docker/build-push-action@v4
         with:
@@ -62,3 +87,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           labels: ${{ env.IMAGE }}
           tags: ${{ env.IMAGE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
