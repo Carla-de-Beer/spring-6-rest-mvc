@@ -1,0 +1,15 @@
+services:
+  mysql-base:
+    image: rest-mvc-mysql
+    build:
+      context: ..
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_PORT=${MYSQL_PORT}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql-db:/var/lib/mysql
