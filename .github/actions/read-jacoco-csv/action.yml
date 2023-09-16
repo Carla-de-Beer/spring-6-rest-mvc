@@ -1,0 +1,13 @@
+name: Check code coverage
+description: Reads the JaCoCo code coverage summary file and determines whether the code coverage suffices
+runs:
+  using: 'node16'
+  main: 'main.js'
+inputs:
+  filepath:
+    description: 'Code coverage CSV filepath'
+    required: true
+  min-coverage-required:
+    description: 'Minimum total code coverage required as a percentage'
+    required: false
+    default: 80
