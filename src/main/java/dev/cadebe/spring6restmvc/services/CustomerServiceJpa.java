@@ -6,6 +6,7 @@ import dev.cadebe.spring6restmvc.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -35,11 +36,13 @@ public class CustomerServiceJpa implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerDto saveNewCustomer(CustomerDto customer) {
         return customerMapper.toModel(customerRepository.save(customerMapper.toEntity(customer)));
     }
 
     @Override
+    @Transactional
     public Optional<CustomerDto> updateCustomerById(UUID customerId, CustomerDto customer) {
         AtomicReference<Optional<CustomerDto>> customerReference = new AtomicReference<>();
 
@@ -54,6 +57,7 @@ public class CustomerServiceJpa implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Optional<CustomerDto> patchCustomerById(UUID customerId, CustomerDto customer) {
         AtomicReference<Optional<CustomerDto>> customerReference = new AtomicReference<>();
 
@@ -86,6 +90,7 @@ public class CustomerServiceJpa implements CustomerService {
     }
 
     @Override
+    @Transactional
     public boolean deleteCustomerById(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
             customerRepository.deleteById(customerId);

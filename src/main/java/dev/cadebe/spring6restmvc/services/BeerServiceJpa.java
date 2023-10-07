@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -82,11 +83,13 @@ public class BeerServiceJpa implements BeerService {
     }
 
     @Override
+    @Transactional
     public BeerDto saveNewBeer(BeerDto beer) {
         return beerMapper.toModel(beerRepository.save(beerMapper.toEntity(beer)));
     }
 
     @Override
+    @Transactional
     public Optional<BeerDto> updateBeerById(UUID beerId, BeerDto beer) {
         AtomicReference<Optional<BeerDto>> beerReference = new AtomicReference<>();
 
@@ -105,6 +108,7 @@ public class BeerServiceJpa implements BeerService {
     }
 
     @Override
+    @Transactional
     public Optional<BeerDto> patchBeerById(UUID beerId, BeerDto beer) {
         AtomicReference<Optional<BeerDto>> beerReference = new AtomicReference<>();
 
@@ -142,6 +146,7 @@ public class BeerServiceJpa implements BeerService {
     }
 
     @Override
+    @Transactional
     public boolean deleteBeerById(UUID beerId) {
         if (beerRepository.existsById(beerId)) {
             beerRepository.deleteById(beerId);
