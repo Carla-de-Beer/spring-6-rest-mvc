@@ -1,5 +1,6 @@
 package dev.cadebe.spring6restmvc.services;
 
+import dev.cadebe.spring6restmvc.config.BeerServiceProperties;
 import dev.cadebe.spring6restmvc.data.BeerEntity;
 import dev.cadebe.spring6restmvc.mappers.BeerMapper;
 import dev.cadebe.spring6restmvc.model.BeerDto;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static dev.cadebe.spring6restmvc.services.BeerServiceJpa.DEFAULT_PAGE_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -36,15 +35,17 @@ class BeerServiceJpaIT {
     @Autowired
     BeerServiceJpa beerService;
 
+    static BeerServiceProperties beerServiceProperties = new BeerServiceProperties();
+
     static Stream<Arguments> getAllBeersByVaryingQueryParameters() {
         return Stream.of(
-                Arguments.of(new BeerParameters(null, null, null, null, null), DEFAULT_PAGE_SIZE, 97),
+                Arguments.of(new BeerParameters(null, null, null, null, null), beerServiceProperties.getDefaultPageSize(), 97),
                 Arguments.of(new BeerParameters("American", null, true, 1, null), 37, 1),
                 Arguments.of(new BeerParameters(null, BeerStyle.IPA, true, 1, null), 548, 1),
                 Arguments.of(new BeerParameters("ALE", BeerStyle.ALE, true, 1, null), 537, 1),
                 Arguments.of(new BeerParameters("ALE", BeerStyle.ALE, false, 5, 20), 537, 1),
                 Arguments.of(new BeerParameters(null, null, true, 5, 20), 20, 121),
-                Arguments.of(new BeerParameters(null, BeerStyle.LAGER, true, 500, DEFAULT_PAGE_SIZE), 105, 1),
+                Arguments.of(new BeerParameters(null, BeerStyle.LAGER, true, 500, beerServiceProperties.getDefaultPageSize()), 105, 1),
                 Arguments.of(new BeerParameters(null, BeerStyle.LAGER, false, 500, 1001), 105, 1));
     }
 

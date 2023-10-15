@@ -1,5 +1,6 @@
 package dev.cadebe.spring6restmvc.services;
 
+import dev.cadebe.spring6restmvc.config.BeerServiceProperties;
 import dev.cadebe.spring6restmvc.data.BeerEntity;
 import dev.cadebe.spring6restmvc.mappers.BeerMapper;
 import dev.cadebe.spring6restmvc.model.BeerDto;
@@ -24,8 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class BeerServiceJpa implements BeerService {
 
-    static final int DEFAULT_PAGE_SIZE = 25;
-    private static final int DEFAULT_PAGE_NUMBER = 0;
+    private static final BeerServiceProperties beerServiceProperties = new BeerServiceProperties();
 
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
@@ -59,14 +59,14 @@ public class BeerServiceJpa implements BeerService {
         if (pageNumber != null && pageNumber > 0) {
             queryPageNumber = pageNumber - 1;
         } else {
-            queryPageNumber = DEFAULT_PAGE_NUMBER;
+            queryPageNumber = beerServiceProperties.getDefaultPageSize();
         }
 
         if (pageSize == null) {
-            queryPageSize = DEFAULT_PAGE_SIZE;
+            queryPageSize = beerServiceProperties.getDefaultPageSize();
         } else {
-            if (pageSize > 1000) {
-                queryPageSize = 1000;
+            if (pageSize > beerServiceProperties.getPageLimit()) {
+                queryPageSize = beerServiceProperties.getPageLimit();
             } else {
                 queryPageSize = pageSize;
             }

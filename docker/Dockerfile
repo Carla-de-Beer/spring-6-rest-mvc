@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine AS builder
+FROM eclipse-temurin:21-jre-alpine AS builder
 ARG JAR_FILE=*.jar
 COPY ${JAR_FILE} application.jar
 
@@ -7,7 +7,7 @@ ENV PROFILE=${PROFILE}
 
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
 USER javauser

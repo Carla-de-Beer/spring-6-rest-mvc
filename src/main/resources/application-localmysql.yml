@@ -35,6 +35,9 @@ springdoc:
   api-docs:
     path: '/api-docs'
 
+beer:
+  service:
+    page-limit: 1000
 
 logging:
   level:
