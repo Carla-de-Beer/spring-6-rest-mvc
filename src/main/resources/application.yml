@@ -17,6 +17,11 @@ springdoc:
   api-docs:
     path: '/api-docs'
 
+beer:
+  service:
+    page-limit: 1250
+    default-page-size: 35
+
 logging:
   level:
     dev:

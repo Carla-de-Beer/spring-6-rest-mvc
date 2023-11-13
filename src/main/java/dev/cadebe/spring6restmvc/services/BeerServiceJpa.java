@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class BeerServiceJpa implements BeerService {
 
-    private static final BeerServiceProperties beerServiceProperties = new BeerServiceProperties();
+    private final BeerServiceProperties beerServiceProperties;
 
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
@@ -52,7 +52,7 @@ public class BeerServiceJpa implements BeerService {
         return beerPage.map(beerMapper::toModel);
     }
 
-    private static PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+    private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
         int queryPageNumber;
         int queryPageSize;
 

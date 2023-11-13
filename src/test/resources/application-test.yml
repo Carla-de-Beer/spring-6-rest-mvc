@@ -1,0 +1,4 @@
+beer:
+  service:
+    page-limit: 1000
+    default-page-size: 25

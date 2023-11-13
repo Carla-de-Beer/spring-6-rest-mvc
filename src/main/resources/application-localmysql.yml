@@ -37,7 +37,8 @@ springdoc:
 
 beer:
   service:
-    page-limit: 1000
+    page-limit: 1250
+    default-page-size: 35
 
 logging:
   level:

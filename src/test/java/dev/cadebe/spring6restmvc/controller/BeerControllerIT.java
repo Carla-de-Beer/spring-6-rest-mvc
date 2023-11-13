@@ -2,7 +2,6 @@ package dev.cadebe.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.cadebe.spring6restmvc.data.BeerEntity;
-import dev.cadebe.spring6restmvc.data.BeerOrderLineEntity;
 import dev.cadebe.spring6restmvc.mappers.BeerMapper;
 import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
@@ -11,7 +10,6 @@ import lombok.val;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
@@ -61,9 +59,9 @@ class BeerControllerIT {
 
     @Test
     void shouldGetBeerList() {
-        val beers = beerController.getBeers(null, null, false, 1, 1001);
+        val beers = beerController.getBeers(null, null, false, 1, 1251);
 
-        assertThat(beers).hasSize(1000);
+        assertThat(beers).hasSize(1250);
     }
 
     @Test
@@ -218,7 +216,7 @@ class BeerControllerIT {
     }
 
     @Test
-    void shouldFailDataValiodationForJpaConstraintsAtWebTierLevel() throws Exception {
+    void shouldFailDataValidationForJpaConstraintsAtWebTierLevel() throws Exception {
         val beer = BeerEntity.builder()
                 .beerName("012345678901234567890123456789012345678901234567890")
                 .beerStyle(BeerStyle.PALE_ALE)
