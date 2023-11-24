@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21.0.1_12-jre-ubi9-minimal AS builder
+FROM eclipse-temurin:21-jre-alpine AS builder
 ARG JAR_FILE=*.jar
 COPY ${JAR_FILE} application.jar
 
@@ -7,7 +7,12 @@ ENV PROFILE=${PROFILE}
 
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM eclipse-temurin:21.0.1_12-jre-ubi9-minimal
+FROM eclipse-temurin:21-jre-alpine
+
+# CVE-2023-5363 workaround, until an updated Alpine image has been made available
+RUN apk upgrade --update-cache --available && \
+    apk add openssl && \
+    rm -rf /var/cache/apk/*
 
 RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
 USER javauser
