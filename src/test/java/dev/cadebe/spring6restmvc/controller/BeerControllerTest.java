@@ -28,6 +28,7 @@ import static dev.cadebe.spring6restmvc.model.BeerStyle.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -120,6 +121,61 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.upc", is("24680")))
                 .andExpect(jsonPath("$.price", is(new BigDecimal("5.99").doubleValue())))
                 .andExpect(jsonPath("$.quantityOnHand", is(158)));
+    }
+
+    @Test
+    void shouldThrowReturnSucecssfullyWhenCorrectBeerStyleEnumProvided() throws Exception {
+        val id1 = UUID.randomUUID();
+        val id2 = UUID.randomUUID();
+
+        when(beerService.listBeers(any(), eq(SAISON), any(), any(), any())).thenReturn(
+                new PageImpl<>(
+                        List.of(
+                                BeerDto.builder()
+                                        .id(id1)
+                                        .version(1)
+                                        .beerName("Alaskan Sky")
+                                        .beerStyle(SAISON)
+                                        .upc("67894")
+                                        .price(new BigDecimal("8.90"))
+                                        .quantityOnHand(122)
+                                        .createdDate(LocalDateTime.now())
+                                        .updatedDate(LocalDateTime.now())
+                                        .build(),
+                                BeerDto.builder()
+                                        .id(id2)
+                                        .version(1)
+                                        .beerName("Northern Delight")
+                                        .beerStyle(SAISON)
+                                        .upc("67428")
+                                        .price(new BigDecimal("6.95"))
+                                        .quantityOnHand(392)
+                                        .createdDate(LocalDateTime.now())
+                                        .updatedDate(LocalDateTime.now())
+                                        .build())));
+
+        mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerStyle", "Saison")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()", is(2)))
+                .andExpect(jsonPath("$.content.[0].id", is(id1.toString())))
+                .andExpect(jsonPath("$.content.[1].id", is(id2.toString())))
+                .andExpect(jsonPath("$.content..beerName", is(List.of("Alaskan Sky", "Northern Delight"))));
+    }
+
+    @Test
+    void shouldThrowReturnBadRequestWhenIncorrectBeerStyleEnumProvided() throws Exception {
+        val response = mockMvc.perform(get(BeerController.BASE_URL)
+                        .queryParam("beerStyle", "XXX"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain;charset=UTF-8"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(response).contains("Failed to convert");
     }
 
     @Test
