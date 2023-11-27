@@ -22,6 +22,22 @@ beer:
     page-limit: 1250
     default-page-size: 35
 
+management:
+  info:
+    env:
+      enabled: true
+
+  endpoints:
+    web:
+      exposure:
+        include:
+          - info
+          - health
+          - metrics
+
+info:
+  java-version: ${java.specification.version}
+
 logging:
   level:
     dev:

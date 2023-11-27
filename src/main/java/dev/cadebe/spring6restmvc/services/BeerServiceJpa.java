@@ -6,7 +6,8 @@ import dev.cadebe.spring6restmvc.mappers.BeerMapper;
 import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.BeerStyle;
 import dev.cadebe.spring6restmvc.repositories.BeerRepository;
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.val;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -22,13 +23,22 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Primary
-@RequiredArgsConstructor
 public class BeerServiceJpa implements BeerService {
 
     private final BeerServiceProperties beerServiceProperties;
-
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
+    private Counter objectsCount;
+
+    public BeerServiceJpa(BeerServiceProperties beerServiceProperties, BeerRepository beerRepository, BeerMapper beerMapper, MeterRegistry meterRegistry) {
+        this.beerServiceProperties = beerServiceProperties;
+        this.beerRepository = beerRepository;
+        this.beerMapper = beerMapper;
+
+        objectsCount = Counter.builder("beer.object.count")
+                .tag("addition", "manual")
+                .register(meterRegistry);
+    }
 
     @Override
     public Page<BeerDto> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
@@ -85,6 +95,7 @@ public class BeerServiceJpa implements BeerService {
     @Override
     @Transactional
     public BeerDto saveNewBeer(BeerDto beer) {
+        objectsCount.increment();
         return beerMapper.toModel(beerRepository.save(beerMapper.toEntity(beer)));
     }
 
