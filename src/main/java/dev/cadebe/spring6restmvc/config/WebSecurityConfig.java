@@ -29,8 +29,8 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(requests ->
                         requests
-                                .requestMatchers("/**/customer").hasRole(ADMIN.name())
-                                .requestMatchers("/**/beers/**").permitAll()
+                                .requestMatchers("/api/v?/customer").hasRole(ADMIN.name())
+                                .requestMatchers("/api/v?/beers/**").permitAll()
                                 .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())
                                 .requestMatchers(EndpointRequest.to(MetricsEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())
                                 .requestMatchers(EndpointRequest.to(InfoEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())

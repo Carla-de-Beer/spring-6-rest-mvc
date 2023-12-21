@@ -2,8 +2,8 @@
 
 ![example event parameter](https://github.com/Carla-de-Beer/spring-6-rest-mvc/actions/workflows/build.yml/badge.svg?event=push)
 
-A Spring 6 demo project accessing a MySQL database to read and update beer-related data. An additional H2 in-memory
-database is also connected and is used to run the integration tests (under the "default" profile).
+A Spring 6 RESTful API demo project with Spring Security Basic Authentication in order to access a MySQL database to read and update beer-related data. An additional H2 in-memory
+database is used to run the integration tests (under the "default" profile).
 
 The Java section of the project is partly based on the following Spring Framework Guru Udemy tutorial:
 https://www.udemy.com/course/spring-framework-6-beginner-to-guru/learn/lecture/33399792?start=15#overview.
@@ -26,8 +26,8 @@ Steps required to run the application with MySQL:
 
 ### Requirements for local execution
 
-* Java 17
-* Spring Boot 3.1.2
+* Java 21
+* Spring Boot 3.2.0
 * JUnit 5
 * MySQL 8.0
 
@@ -50,19 +50,19 @@ cd docker/docker-compose; docker compose -f docker-compose.application.yml up
 
 ## Example Requests
 
-Get all beer entries
+Get all beer entries:
 
 ```sh
 curl -X GET localhost:8080/api/v1/beers | jq
 ```
 
-Get a beer by name
+Get a beer by name:
 
 ```sh
 curl -X GET "localhost:8080/api/v1/beers?beerName=Porter" | jq
 ```
 
-Get a beer by style
+Get a beer by style:
 
 ```sh
 curl -X GET "localhost:8080/api/v1/beers?beerStyle=SAISON" | jq
@@ -74,8 +74,8 @@ Create a new beer entry:
 curl -i -X POST -H 'Content-Type: application/json' -d '{"beerName":"Alaskan Icy Bay","beerStyle":"IPA","upc":"100","price":12.00,"quantityOnHand":10}' localhost:8080/api/v1/beers 
 ```
 
-Get all customer entries
+Get all customer entries:
 
 ```sh
-curl -I -i  -X GET --user admin:admin localhost:8080/api/v1/customers
+curl -i -X GET --user admin:admin localhost:8080/api/v1/customers
 ```
