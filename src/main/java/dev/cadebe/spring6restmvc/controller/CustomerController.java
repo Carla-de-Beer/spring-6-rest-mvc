@@ -7,6 +7,7 @@ import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +18,11 @@ import java.util.UUID;
 @RestController
 public class CustomerController {
 
-    public static final String BASE_URL = "/api/v1/customer";
+    public static final String BASE_URL = "/api/v1/customers";
 
     private final CustomerService customerService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CustomerDto> listAllCustomers() {
         return customerService.getAllCustomers();

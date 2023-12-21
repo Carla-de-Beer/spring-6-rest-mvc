@@ -53,23 +53,29 @@ cd docker/docker-compose; docker compose -f docker-compose.application.yml up
 Get all beer entries
 
 ```sh
-curl -X GET localhost:8080/api/v1/beer | jq
+curl -X GET localhost:8080/api/v1/beers | jq
 ```
 
 Get a beer by name
 
 ```sh
-curl -X GET "localhost:8080/api/v1/beer?beerName=Porter" | jq
+curl -X GET "localhost:8080/api/v1/beers?beerName=Porter" | jq
 ```
 
 Get a beer by style
 
 ```sh
-curl -X GET "localhost:8080/api/v1/beer?beerStyle=SAISON" | jq
+curl -X GET "localhost:8080/api/v1/beers?beerStyle=SAISON" | jq
 ```
 
 Create a new beer entry:
 
 ```sh
-curl -i -X POST -H 'Content-Type: application/json' -d '{"beerName":"Alaskan Icy Bay","beerStyle":"IPA","upc":"100","price":12.00,"quantityOnHand":10}' localhost:8080/api/v1/beer 
+curl -i -X POST -H 'Content-Type: application/json' -d '{"beerName":"Alaskan Icy Bay","beerStyle":"IPA","upc":"100","price":12.00,"quantityOnHand":10}' localhost:8080/api/v1/beers 
+```
+
+Get all customer entries
+
+```sh
+curl -I -i  -X GET --user admin:admin localhost:8080/api/v1/customers
 ```

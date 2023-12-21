@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BeerController {
 
-    public static final String BASE_URL = "/api/v1/beer";
+    public static final String BASE_URL = "/api/v1/beers";
 
     private final BeerService beerService;
 
