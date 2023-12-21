@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -25,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static dev.cadebe.spring6restmvc.controller.BeerController.BASE_URL;
 import static dev.cadebe.spring6restmvc.model.BeerStyle.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -32,7 +32,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
@@ -85,14 +87,15 @@ class BeerControllerTest {
                                         .updatedDate(LocalDateTime.now())
                                         .build())));
 
-        mockMvc.perform(get(BeerController.BASE_URL)
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BASE_URL)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.length()", is(2)))
-                .andExpect(jsonPath("$.content.[0].id", is(id1.toString())))
-                .andExpect(jsonPath("$.content.[1].id", is(id2.toString())))
-                .andExpect(jsonPath("$.content..beerName", is(List.of("Galaxy Cat", "Crank"))));
+                .andDo(print())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.[0].id", is(id1.toString())))
+                .andExpect(jsonPath("$.[1].id", is(id2.toString())))
+                .andExpect(jsonPath("$..beerName", is(List.of("Galaxy Cat", "Crank"))));
     }
 
     @Test
@@ -113,9 +116,9 @@ class BeerControllerTest {
                                 .updatedDate(LocalDateTime.now())
                                 .build()));
 
-        mockMvc.perform(get(BeerController.BASE_URL + "/" + id))
+        mockMvc.perform(get(BASE_URL + "/" + id))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(id.toString())))
                 .andExpect(jsonPath("$.version", is(1)))
                 .andExpect(jsonPath("$.beerName", is("Czech Brew")))
@@ -156,20 +159,20 @@ class BeerControllerTest {
                                         .updatedDate(LocalDateTime.now())
                                         .build())));
 
-        mockMvc.perform(get(BeerController.BASE_URL)
+        mockMvc.perform(get(BASE_URL)
                         .queryParam("beerStyle", "Saison")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.length()", is(2)))
-                .andExpect(jsonPath("$.content.[0].id", is(id1.toString())))
-                .andExpect(jsonPath("$.content.[1].id", is(id2.toString())))
-                .andExpect(jsonPath("$.content..beerName", is(List.of("Alaskan Sky", "Northern Delight"))));
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.[0].id", is(id1.toString())))
+                .andExpect(jsonPath("$.[1].id", is(id2.toString())))
+                .andExpect(jsonPath("$..beerName", is(List.of("Alaskan Sky", "Northern Delight"))));
     }
 
     @Test
     void shouldThrowReturnBadRequestWhenIncorrectBeerStyleEnumProvided() throws Exception {
-        val response = mockMvc.perform(get(BeerController.BASE_URL)
+        val response = mockMvc.perform(get(BASE_URL)
                         .queryParam("beerStyle", "XXX"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain;charset=UTF-8"))
@@ -184,7 +187,7 @@ class BeerControllerTest {
     void shouldReturnNotFoundStatusWhenGetBeerByIdNotFound() throws Exception {
         when(beerService.getBeerbyId(any(UUID.class))).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(BeerController.BASE_URL + "/" + UUID.randomUUID()))
+        mockMvc.perform(get(BASE_URL + "/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
@@ -208,9 +211,9 @@ class BeerControllerTest {
 
         when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beer);
 
-        mockMvc.perform(post(BeerController.BASE_URL)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(BASE_URL)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
@@ -222,9 +225,9 @@ class BeerControllerTest {
 
         when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beer);
 
-        mockMvc.perform(post(BeerController.BASE_URL)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(BASE_URL)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(jsonPath("$.length()", is(4)))
                 .andExpect(status().isBadRequest());
@@ -246,9 +249,9 @@ class BeerControllerTest {
 
         when(beerService.updateBeerById(id, beer)).thenReturn(Optional.of(beer));
 
-        mockMvc.perform(put(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
 
@@ -261,9 +264,9 @@ class BeerControllerTest {
         val beer = BeerDto.builder().build();
         when(beerService.updateBeerById(id, beer)).thenReturn(Optional.empty());
 
-        mockMvc.perform(put(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNotFound());
 
@@ -313,9 +316,9 @@ class BeerControllerTest {
     void shouldPatchExistingBeerById(UUID id, BeerDto beer) throws Exception {
         when(beerService.patchBeerById(id, beer)).thenReturn(Optional.of(beer));
 
-        mockMvc.perform(patch(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(patch(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
 
@@ -330,9 +333,9 @@ class BeerControllerTest {
         val beer = BeerDto.builder().build();
         when(beerService.updateBeerById(id, beer)).thenReturn(Optional.empty());
 
-        mockMvc.perform(patch(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(patch(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNotFound());
 
@@ -345,8 +348,8 @@ class BeerControllerTest {
 
         when(beerService.deleteBeerById(id)).thenReturn(true);
 
-        mockMvc.perform(delete(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         verify(beerService).deleteBeerById(idCaptor.capture());
@@ -359,8 +362,8 @@ class BeerControllerTest {
 
         when(beerService.deleteBeerById(id)).thenReturn(false);
 
-        mockMvc.perform(delete(BeerController.BASE_URL + "/" + id)
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(BASE_URL + "/" + id)
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 }

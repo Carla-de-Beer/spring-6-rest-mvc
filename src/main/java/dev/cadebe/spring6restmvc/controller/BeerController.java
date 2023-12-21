@@ -6,13 +6,14 @@ import dev.cadebe.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.convert.ConversionFailedException;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,30 +26,37 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping
-    public Page<BeerDto> getBeers(@RequestParam(required = false) String beerName,
-                                  @RequestParam(required = false) BeerStyle beerStyle,
-                                  @RequestParam(required = false) Boolean showInventory,
-                                  @RequestParam(required = false) Integer pageNumber,
-                                  @RequestParam(required = false) Integer pageSize) {
-        return beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize);
+    public ResponseEntity<List<BeerDto>> getBeers(@RequestParam(required = false) String beerName,
+                                                  @RequestParam(required = false) BeerStyle beerStyle,
+                                                  @RequestParam(required = false) Boolean showInventory,
+                                                  @RequestParam(required = false) Integer pageNumber,
+                                                  @RequestParam(required = false) Integer pageSize) {
+        val page = beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize);
+
+        return ResponseEntity.ok().body(page.getContent());
     }
 
-    @GetMapping("{beerId}")
-    public BeerDto getBeerById(@PathVariable("beerId") UUID beerId) {
-        return beerService.getBeerbyId(beerId).orElseThrow(NotFoundException::new);
+    @GetMapping("/{beerId}")
+    public ResponseEntity<BeerDto> getBeerById(@PathVariable("beerId") UUID beerId) {
+        val found = beerService.getBeerbyId(beerId).orElseThrow(NotFoundException::new);
+
+        return ResponseEntity.ok().body(found);
     }
 
     @PostMapping
     public ResponseEntity<String> saveNewBeer(@Validated @RequestBody BeerDto beer) {
         val savedBeer = beerService.saveNewBeer(beer);
 
-        val headers = new HttpHeaders();
-        headers.add("Location", BeerController.BASE_URL + "/" + savedBeer.getId());
+        val location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{beerId}")
+                .buildAndExpand(savedBeer.getId())
+                .toUri();
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("{beerId}")
+    @PutMapping("/{beerId}")
     public ResponseEntity<String> updateById(@PathVariable UUID beerId, @RequestBody BeerDto beer) {
         val updated = beerService.updateBeerById(beerId, beer);
 
@@ -56,10 +64,10 @@ public class BeerController {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{beerId}")
+    @PatchMapping("/{beerId}")
     public ResponseEntity<String> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDto beer) {
         val patched = beerService.patchBeerById(beerId, beer);
 
@@ -67,16 +75,16 @@ public class BeerController {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{beerId}")
+    @DeleteMapping("/{beerId}")
     public ResponseEntity<String> deleteBeerById(@PathVariable UUID beerId) {
         if (!beerService.deleteBeerById(beerId)) {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler({ConversionFailedException.class})

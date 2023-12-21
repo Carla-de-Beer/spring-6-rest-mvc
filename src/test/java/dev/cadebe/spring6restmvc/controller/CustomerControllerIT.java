@@ -2,7 +2,6 @@ package dev.cadebe.spring6restmvc.controller;
 
 import dev.cadebe.spring6restmvc.data.CustomerEntity;
 import dev.cadebe.spring6restmvc.mappers.CustomerMapper;
-import dev.cadebe.spring6restmvc.model.BeerDto;
 import dev.cadebe.spring6restmvc.model.CustomerDto;
 import dev.cadebe.spring6restmvc.repositories.CustomerRepository;
 import lombok.val;
@@ -81,8 +80,8 @@ class CustomerControllerIT {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
         assertThat(result.getHeaders().getLocation()).isNotNull();
 
-        val pathSegments = result.getHeaders().getLocation().getPath().split("/");
-        val savedCustomer = customerRepository.findById(UUID.fromString(pathSegments[4]));
+        val id = result.getHeaders().getLocation().getPath().substring(1);
+        val savedCustomer = customerRepository.findById(UUID.fromString(id));
 
         assertThat(savedCustomer.get()).isNotNull();
         assertThat(savedCustomer.get().getName()).isEqualTo(name);

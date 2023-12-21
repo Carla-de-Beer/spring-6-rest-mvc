@@ -4,11 +4,9 @@ import dev.cadebe.spring6restmvc.model.CustomerDto;
 import dev.cadebe.spring6restmvc.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,28 +20,32 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CustomerDto> listAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping("{customerId}")
-    public CustomerDto getCustomerById(@PathVariable UUID customerId) {
-        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable UUID customerId) {
+        val found = customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
+
+        return ResponseEntity.ok().body(found);
     }
 
     @PostMapping
     public ResponseEntity<String> saveNewCustomer(@RequestBody CustomerDto customer) {
         CustomerDto savedCustomer = customerService.saveNewCustomer(customer);
 
-        val headers = new HttpHeaders();
-        headers.add("Location", BASE_URL + "/" + savedCustomer.getId().toString());
+        val location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{customerId}")
+                .buildAndExpand(savedCustomer.getId())
+                .toUri();
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("{customerId}")
+    @PutMapping("/{customerId}")
     public ResponseEntity<String> updateCustomerById(@PathVariable("customerId") UUID customerId, @RequestBody CustomerDto customer) {
         val updatedCustomer = customerService.updateCustomerById(customerId, customer);
 
@@ -51,26 +53,26 @@ public class CustomerController {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{beerId}")
-    public ResponseEntity<String> patchCustomerById(@PathVariable("beerId") UUID customerId, @RequestBody CustomerDto customer) {
+    @PatchMapping("/{customerId}")
+    public ResponseEntity<String> patchCustomerById(@PathVariable("customerId") UUID customerId, @RequestBody CustomerDto customer) {
         val patchedCustomer = customerService.patchCustomerById(customerId, customer);
 
         if (patchedCustomer.isEmpty()) {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{customerId}")
+    @DeleteMapping("/{customerId}")
     public ResponseEntity<String> deleteCustomerById(@PathVariable("customerId") UUID customerId) {
         if (!customerService.deleteCustomerById(customerId)) {
             throw new NotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
