@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.cadebe</groupId>
@@ -17,8 +17,6 @@
         <java.version>21</java.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <start-class>dev.cadebe.spring6restmvc.Spring6RestMvcApplication</start-class>
-        <!-- CVE-2023-6378 - Will be fixed with next Spring Boot upgrade -->
-        <logback.version>1.4.14</logback.version>
     </properties>
     <dependencies>
         <dependency>
@@ -76,12 +74,6 @@
                     <artifactId>commons-collections</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- CVE-2022-41854; CVE-2022-1471 -->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
