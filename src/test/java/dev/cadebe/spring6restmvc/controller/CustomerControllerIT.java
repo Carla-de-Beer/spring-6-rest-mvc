@@ -1,5 +1,7 @@
 package dev.cadebe.spring6restmvc.controller;
 
+import dev.cadebe.spring6restmvc.annotations.AdminUser;
+import dev.cadebe.spring6restmvc.annotations.StandardUser;
 import dev.cadebe.spring6restmvc.data.CustomerEntity;
 import dev.cadebe.spring6restmvc.mappers.CustomerMapper;
 import dev.cadebe.spring6restmvc.model.CustomerDto;
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -39,7 +41,6 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldReturnEmptyListIfNoCustomersFound() {
         customerRepository.deleteAll();
 
@@ -66,8 +67,8 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
-    void shouldSaveNewCustomer() {
+    @AdminUser
+    void shouldSaveNewCustomerForAnAdminUser() {
         val name = "Customer XYZ";
         assertThat(customerRepository.findAll()).hasSize(3);
 
@@ -90,7 +91,18 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
+    @StandardUser
+    void shouldReturnAccessDeniedWhenAttemptingToSaveNewCustomerForUnAuthorizedUser() {
+        val name = "Customer XYZ";
+        val customer = CustomerDto.builder()
+                .name(name)
+                .build();
+
+        assertThrows(AccessDeniedException.class, () -> customerController.saveNewCustomer(customer));
+    }
+
+    @Test
+    @Transactional
     void shouldUpdateCustomerById() {
         val name = "Customer XYZ";
         val customer = customerRepository.findAll().get(0);
@@ -115,7 +127,6 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldPatchCustomerById() {
         val customer = customerRepository.findAll().get(0);
         val id = customer.getId();
@@ -149,7 +160,6 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldDeleteCustomerById() {
         val customerId = customerRepository.findAll().get(0).getId();
         val found = customerRepository.findById(customerId);

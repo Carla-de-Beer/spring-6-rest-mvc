@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +66,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldReturnEmptyListIfNoBeersFound() {
         beerRepository.deleteAll();
         val beers = beerController.getBeers(null, null, false, 1, 25);
@@ -189,7 +187,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldSaveNewBeer() {
         val name = "New Beer";
         assertThat(beerRepository.findAll()).hasSize(2413);
@@ -235,7 +232,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldUpdateExistingBeer() {
         val beer = beerRepository.findAll().get(0);
         val id = beer.getId();
@@ -255,7 +251,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldFailUpdateByIdIfBeerNotFound() {
         val id = UUID.randomUUID();
         val beer = BeerDto.builder().build();
@@ -265,7 +260,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldPatchExistingBeer() {
         val beer = beerRepository.findAll().get(0);
         val id = beer.getId();
@@ -302,7 +296,6 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback
     void shouldDeleteBeerById() {
         val beer = beerRepository.findAll().get(0);
 

@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(BeerController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class BeerControllerTest {
 
     @Autowired
@@ -129,7 +129,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void shouldThrowReturnSucecssfullyWhenCorrectBeerStyleEnumProvided() throws Exception {
+    void shouldReturnSuccessfullyWhenCorrectBeerStyleEnumProvided() throws Exception {
         val id1 = UUID.randomUUID();
         val id2 = UUID.randomUUID();
 

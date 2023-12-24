@@ -6,7 +6,6 @@ import dev.cadebe.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.convert.ConversionFailedException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -89,6 +88,6 @@ public class BeerController {
 
     @ExceptionHandler({ConversionFailedException.class})
     public ResponseEntity<String> handleConversionFailure(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

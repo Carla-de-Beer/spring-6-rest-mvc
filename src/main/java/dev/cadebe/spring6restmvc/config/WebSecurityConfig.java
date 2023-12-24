@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -22,6 +23,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,12 +31,12 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(requests ->
                         requests
-                                .requestMatchers("/api/v?/customer").hasRole(ADMIN.name())
+                                .requestMatchers("/api/v?/customers/**").hasAnyRole(ADMIN, USER)
                                 .requestMatchers("/api/v?/beers/**").permitAll()
-                                .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())
-                                .requestMatchers(EndpointRequest.to(MetricsEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())
-                                .requestMatchers(EndpointRequest.to(InfoEndpoint.class)).hasAnyRole(ADMIN.name(), ACTUATOR.name())
-                                .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(ADMIN.name())
+                                .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).hasAnyRole(ADMIN, ACTUATOR)
+                                .requestMatchers(EndpointRequest.to(MetricsEndpoint.class)).hasAnyRole(ADMIN, ACTUATOR)
+                                .requestMatchers(EndpointRequest.to(InfoEndpoint.class)).hasAnyRole(ADMIN, ACTUATOR)
+                                .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(ADMIN)
                                 .anyRequest().authenticated()
 
                 )
@@ -48,17 +50,17 @@ public class WebSecurityConfig {
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails admin = User.withUsername("admin")
                 .password(passwordEncoder.encode("admin"))
-                .roles(ADMIN.name())
+                .roles(ADMIN)
                 .build();
 
         UserDetails user = User.withUsername("user")
                 .password(passwordEncoder.encode("user"))
-                .roles(USER.name())
+                .roles(USER)
                 .build();
 
         UserDetails actuator = User.withUsername("actuator")
                 .password(passwordEncoder.encode("actuator"))
-                .roles(ACTUATOR.name())
+                .roles(ACTUATOR)
                 .build();
 
         return new InMemoryUserDetailsManager(admin, actuator, user);
@@ -66,7 +68,6 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        return encoder;
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

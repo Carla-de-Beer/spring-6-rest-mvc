@@ -1,13 +1,11 @@
 package dev.cadebe.spring6restmvc.config;
 
-public enum SecurityRoles {
-    ADMIN("ADMIN"),
-    ACTUATOR("ACTUATOR"),
-    USER("USER");
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-    private final String roleName;
-
-    SecurityRoles(String roleName) {
-        this.roleName = roleName;
-    }
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class SecurityRoles {
+    public static final String ADMIN = "ADMIN";
+    public static final String ACTUATOR = "ACTUATOR";
+    public static final String USER = "USER";
 }

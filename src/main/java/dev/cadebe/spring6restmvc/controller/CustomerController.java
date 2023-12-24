@@ -5,6 +5,7 @@ import dev.cadebe.spring6restmvc.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,6 +33,7 @@ public class CustomerController {
         return ResponseEntity.ok().body(found);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<String> saveNewCustomer(@RequestBody CustomerDto customer) {
         CustomerDto savedCustomer = customerService.saveNewCustomer(customer);
