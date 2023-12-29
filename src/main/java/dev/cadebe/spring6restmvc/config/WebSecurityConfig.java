@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,12 +26,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeHttpRequests(requests ->
                         requests
+                                .requestMatchers(HttpMethod.PUT, "/api/v?/customers/**").hasAnyRole(ADMIN)
                                 .requestMatchers("/api/v?/customers/**").hasAnyRole(ADMIN, USER)
                                 .requestMatchers("/api/v?/beers/**").permitAll()
                                 .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).hasAnyRole(ADMIN, ACTUATOR)

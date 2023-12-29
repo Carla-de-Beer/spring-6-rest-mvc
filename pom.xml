@@ -17,6 +17,8 @@
         <java.version>21</java.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <start-class>dev.cadebe.spring6restmvc.Spring6RestMvcApplication</start-class>
+        <!-- ClassNotFoundException: org.hibernate.dialect.MySQL57Dialect with Hibernate 6.4 : Error on upgrading to spring-boot-starter-parent 3.2.1 -->
+        <hibernate.version>6.3.2.Final</hibernate.version>
     </properties>
     <dependencies>
         <dependency>
