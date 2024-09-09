@@ -36,19 +36,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CustomerControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    CustomerService customerService;
+    private CustomerService customerService;
 
     @Captor
-    ArgumentCaptor<UUID> idCaptor;
+    private ArgumentCaptor<UUID> idCaptor;
 
     @Captor
-    ArgumentCaptor<CustomerDto> customerCaptor;
+    private ArgumentCaptor<CustomerDto> customerCaptor;
 
     @Test
     void shouldGetCustomerList() throws Exception {

@@ -29,13 +29,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BeerServiceJpaIT {
 
     @Autowired
-    BeerRepository beerRepository;
+    private BeerRepository beerRepository;
 
     @Autowired
-    BeerMapper beerMapper;
+    private BeerMapper beerMapper;
 
     @Autowired
-    BeerServiceJpa beerService;
+    private BeerServiceJpa beerService;
 
     static BeerServiceProperties beerServiceProperties = new BeerServiceProperties();
 
@@ -74,7 +74,7 @@ class BeerServiceJpaIT {
 
     @Test
     void shouldFindBeerById() {
-        val first = beerRepository.findAll().get(0);
+        val first = beerRepository.findAll().getFirst();
         val result = beerService.getBeerbyId(first.getId());
 
         assertThat(result).isNotEmpty();
@@ -155,7 +155,7 @@ class BeerServiceJpaIT {
     @Transactional
     @Rollback
     void shouldUpdateExistingBeerById(BeerDto beerDto) {
-        val first = beerRepository.findAll().get(0);
+        val first = beerRepository.findAll().getFirst();
 
         assertThat(first)
                 .extracting(BeerEntity::getBeerName, BeerEntity::getBeerStyle, BeerEntity::getPrice, BeerEntity::getUpc, BeerEntity::getQuantityOnHand)
@@ -196,7 +196,7 @@ class BeerServiceJpaIT {
     @Transactional
     @Rollback
     void shouldPatchExistingBeer() {
-        val beer = beerRepository.findAll().get(0);
+        val beer = beerRepository.findAll().getFirst();
         val id = beer.getId();
         val beerDto = beerMapper.toModel(beer);
 
@@ -243,7 +243,7 @@ class BeerServiceJpaIT {
     @Test
     @Transactional
     void shouldDeleteBeerById() {
-        val first = beerRepository.findAll().get(0);
+        val first = beerRepository.findAll().getFirst();
 
         beerService.deleteBeerById(first.getId());
 

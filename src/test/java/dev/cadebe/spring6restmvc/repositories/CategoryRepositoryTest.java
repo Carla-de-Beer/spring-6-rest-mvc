@@ -18,16 +18,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CategoryRepositoryTest {
 
     @Autowired
-    BeerRepository beerRepository;
+    private BeerRepository beerRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
-    BeerEntity testBeer;
+    private BeerEntity testBeer;
 
     @BeforeEach
     void setUp() {
-        testBeer = beerRepository.findAll().get(0);
+        testBeer = beerRepository.findAll().getFirst();
     }
 
     @Test

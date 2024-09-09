@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BeerRepositoryTest {
 
     @Autowired
-    BeerRepository beerRepository;
+    private BeerRepository beerRepository;
 
     @Test
     void shouldSaveNewBeer() {
@@ -42,14 +42,15 @@ class BeerRepositoryTest {
 
     @Test
     void shouldFailWhenBeerNameTooLong() {
-        assertThrows(ConstraintViolationException.class, () -> {
-            beerRepository.save(BeerEntity.builder()
-                    .beerName("012345678901234567890123456789012345678901234567890")
-                    .beerStyle(BeerStyle.PILSNER)
-                    .upc("12345")
-                    .price(new BigDecimal("1.99"))
-                    .build());
+        val beerEntity = BeerEntity.builder()
+                .beerName("012345678901234567890123456789012345678901234567890")
+                .beerStyle(BeerStyle.PILSNER)
+                .upc("12345")
+                .price(new BigDecimal("1.99"))
+                .build();
 
+        assertThrows(ConstraintViolationException.class, () -> {
+            beerRepository.save(beerEntity);
             beerRepository.flush();
         });
     }

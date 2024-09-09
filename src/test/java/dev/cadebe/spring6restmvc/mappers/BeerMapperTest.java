@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -137,13 +136,6 @@ class BeerMapperTest {
 
     @Test
     void shouldMapFromDtoToEntityForNullInput() {
-        val mapped = beerMapper.toEntity(null);
-
-        assertThat(mapped).isNull();
-    }
-
-    @Test
-    void shouldMapFromEntityToDtoForNullInput() {
         val mapped = beerMapper.toEntity(null);
 
         assertThat(mapped).isNull();

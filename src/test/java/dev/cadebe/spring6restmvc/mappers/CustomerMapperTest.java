@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CustomerMapperTest {
 
-    CustomerMapper customerMapper = new CustomerMapperImpl();
+    private CustomerMapper customerMapper = new CustomerMapperImpl();
 
     @Test
     void shouldMapFromDtoToEntity() {
@@ -80,13 +80,6 @@ class CustomerMapperTest {
 
     @Test
     void shouldMapFromDtoToEntityForNullInput() {
-        val mapped = customerMapper.toEntity(null);
-
-        assertThat(mapped).isNull();
-    }
-
-    @Test
-    void shouldMapFromEntityToDtoForNullInput() {
         val mapped = customerMapper.toEntity(null);
 
         assertThat(mapped).isNull();

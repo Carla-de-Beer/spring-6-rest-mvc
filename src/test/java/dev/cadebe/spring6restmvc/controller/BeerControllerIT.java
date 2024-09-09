@@ -35,19 +35,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BeerControllerIT {
 
     @Autowired
-    BeerController beerController;
+    private BeerController beerController;
 
     @Autowired
-    BeerRepository beerRepository;
+    private BeerRepository beerRepository;
 
     @Autowired
-    BeerMapper beerMapper;
+    private BeerMapper beerMapper;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Test
     void shouldGetBeerList() {
@@ -67,7 +67,7 @@ class BeerControllerIT {
 
     @Test
     void shouldGetBeerById() {
-        val beer = beerRepository.findAll().get(0);
+        val beer = beerRepository.findAll().getFirst();
         val found = beerController.getBeerById(beerMapper.toModel(beer).getId());
 
         assertThat(found).isNotNull();
@@ -225,7 +225,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     void shouldUpdateExistingBeer() {
-        val beer = beerRepository.findAll().get(0);
+        val beer = beerRepository.findAll().getFirst();
         val id = beer.getId();
         val beerDto = beerMapper.toModel(beer);
         beerDto.setBeerName("UPDATED");
@@ -253,7 +253,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     void shouldPatchExistingBeer() {
-        val beer = beerRepository.findAll().get(0);
+        val beer = beerRepository.findAll().getFirst();
         val id = beer.getId();
         val beerDto = beerMapper.toModel(beer);
 
@@ -289,7 +289,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     void shouldDeleteBeerById() {
-        val beer = beerRepository.findAll().get(0);
+        val beer = beerRepository.findAll().getFirst();
 
         assertThat(beerRepository.findById(beer.getId()).get()).isNotNull();
 

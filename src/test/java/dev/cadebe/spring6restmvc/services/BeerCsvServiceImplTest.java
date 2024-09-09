@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BeerCsvServiceImplTest {
 
-    BeerCsvService beerCsvService = new BeerCsvServiceImpl();
+    private BeerCsvService beerCsvService = new BeerCsvServiceImpl();
 
     @Test
     void shouldCreateListOfBeerCsvObjectsFromCsvFile() throws Exception {
@@ -59,11 +59,11 @@ class BeerCsvServiceImplTest {
 
         assertThat(beerList).hasSize(2410);
 
-        assertThat(beerList.get(0))
+        assertThat(beerList.getFirst())
                 .usingRecursiveComparison()
                 .isEqualTo(expectedFirst);
 
-        assertThat(beerList.get(beerList.size() - 1))
+        assertThat(beerList.getLast())
                 .usingRecursiveComparison()
                 .isEqualTo(expectedLast);
     }

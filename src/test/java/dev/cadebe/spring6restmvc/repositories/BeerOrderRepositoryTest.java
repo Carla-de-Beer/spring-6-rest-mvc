@@ -1,7 +1,6 @@
 package dev.cadebe.spring6restmvc.repositories;
 
 import dev.cadebe.spring6restmvc.bootstrap.BootstrapData;
-import dev.cadebe.spring6restmvc.data.BeerEntity;
 import dev.cadebe.spring6restmvc.data.BeerOrderEntity;
 import dev.cadebe.spring6restmvc.data.BeerOrderShipmentEntity;
 import dev.cadebe.spring6restmvc.data.CustomerEntity;
@@ -20,21 +19,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BeerOrderRepositoryTest {
 
     @Autowired
-    BeerOrderRepository beerOrderRepository;
+    private BeerOrderRepository beerOrderRepository;
 
     @Autowired
-    BeerRepository beerRepository;
+    private CustomerRepository customerRepository;
 
-    @Autowired
-    CustomerRepository customerRepository;
-
-    BeerEntity testBeer;
-    CustomerEntity testCustomer;
+    private CustomerEntity testCustomer;
 
     @BeforeEach
     void setUp() {
-        testBeer = beerRepository.findAll().get(0);
-        testCustomer = customerRepository.findAll().get(0);
+        testCustomer = customerRepository.findAll().getFirst();
     }
 
     @Test

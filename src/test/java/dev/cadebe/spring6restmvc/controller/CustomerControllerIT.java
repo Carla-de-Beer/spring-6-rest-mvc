@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CustomerControllerIT {
 
     @Autowired
-    CustomerController customerController;
+    private CustomerController customerController;
 
     @Autowired
-    CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    CustomerMapper customerMapper;
+    private CustomerMapper customerMapper;
 
     @Test
     void shouldGetCustomerList() {
@@ -51,7 +51,7 @@ class CustomerControllerIT {
 
     @Test
     void shouldGetCustomerById() {
-        val customer = customerRepository.findAll().get(0);
+        val customer = customerRepository.findAll().getFirst();
 
         val found = customerController.getCustomerById(customer.getId());
 
@@ -105,7 +105,7 @@ class CustomerControllerIT {
     @Transactional
     void shouldUpdateCustomerById() {
         val name = "Customer XYZ";
-        val customer = customerRepository.findAll().get(0);
+        val customer = customerRepository.findAll().getFirst();
         val customerDto = customerMapper.toModel(customer);
         customerDto.setName(name);
 
@@ -128,7 +128,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     void shouldPatchCustomerById() {
-        val customer = customerRepository.findAll().get(0);
+        val customer = customerRepository.findAll().getFirst();
         val id = customer.getId();
         val customerDto = customerMapper.toModel(customer);
 
@@ -161,7 +161,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     void shouldDeleteCustomerById() {
-        val customerId = customerRepository.findAll().get(0).getId();
+        val customerId = customerRepository.findAll().getFirst().getId();
         val found = customerRepository.findById(customerId);
         assertThat(found).isNotEmpty();
 

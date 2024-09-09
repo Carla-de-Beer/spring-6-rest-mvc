@@ -34,7 +34,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BeerController.class)
@@ -42,19 +41,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BeerControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    BeerService beerService;
+    private BeerService beerService;
 
     @Captor
-    ArgumentCaptor<UUID> idCaptor;
+    private ArgumentCaptor<UUID> idCaptor;
 
     @Captor
-    ArgumentCaptor<BeerDto> beerCaptor;
+    private ArgumentCaptor<BeerDto> beerCaptor;
 
     @Test
     void shouldGetBeerList() throws Exception {
@@ -87,10 +86,10 @@ class BeerControllerTest {
                                         .updatedDate(LocalDateTime.now())
                                         .build())));
 
-        mockMvc.perform(get(BASE_URL)
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
+        val result = mockMvc.perform(get(BASE_URL)
+                .accept(APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(2)))
                 .andExpect(jsonPath("$.[0].id", is(id1.toString())))
@@ -116,9 +115,10 @@ class BeerControllerTest {
                                 .updatedDate(LocalDateTime.now())
                                 .build()));
 
-        mockMvc.perform(get(BASE_URL + "/" + id))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
+        val result = mockMvc.perform(get(BASE_URL + "/" + id))
+                .andExpect(status().isOk());
+
+        result.andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(id.toString())))
                 .andExpect(jsonPath("$.version", is(1)))
                 .andExpect(jsonPath("$.beerName", is("Czech Brew")))
@@ -159,11 +159,12 @@ class BeerControllerTest {
                                         .updatedDate(LocalDateTime.now())
                                         .build())));
 
-        mockMvc.perform(get(BASE_URL)
+        val result = mockMvc.perform(get(BASE_URL)
                         .queryParam("beerStyle", "Saison")
                         .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        result.andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(2)))
                 .andExpect(jsonPath("$.[0].id", is(id1.toString())))
                 .andExpect(jsonPath("$.[1].id", is(id2.toString())))
@@ -211,11 +212,12 @@ class BeerControllerTest {
 
         when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beer);
 
-        mockMvc.perform(post(BASE_URL)
-                        .accept(APPLICATION_JSON)
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
-                .andExpect(status().isCreated())
+        val result = mockMvc.perform(post(BASE_URL)
+                .accept(APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beer)));
+
+        result.andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
     }
 
@@ -225,11 +227,12 @@ class BeerControllerTest {
 
         when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beer);
 
-        mockMvc.perform(post(BASE_URL)
-                        .accept(APPLICATION_JSON)
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
-                .andExpect(jsonPath("$.length()", is(4)))
+        val result = mockMvc.perform(post(BASE_URL)
+                .accept(APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beer)));
+
+        result.andExpect(jsonPath("$.length()", is(4)))
                 .andExpect(status().isBadRequest());
     }
 

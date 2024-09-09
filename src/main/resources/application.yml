@@ -26,7 +26,6 @@ management:
   info:
     env:
       enabled: true
-
   endpoints:
     web:
       exposure:
@@ -34,6 +33,11 @@ management:
           - info
           - health
           - metrics
+  elastic:
+   metrics:
+    export:
+      host: http://localhost:9200
+      enabled: true
 
 info:
   java-version: ${java.specification.version}
@@ -42,4 +46,3 @@ logging:
   level:
     dev:
       cadebe: debug
-

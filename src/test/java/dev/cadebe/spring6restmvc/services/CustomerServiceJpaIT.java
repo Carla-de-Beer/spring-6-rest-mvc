@@ -23,13 +23,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomerServiceJpaIT {
 
     @Autowired
-    CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    CustomerMapper customerMapper;
+    private CustomerMapper customerMapper;
 
     @Autowired
-    CustomerServiceJpa customerService;
+    private CustomerServiceJpa customerService;
 
     @Test
     void shouldListAllCustomers() {
@@ -51,7 +51,7 @@ class CustomerServiceJpaIT {
 
     @Test
     void shouldGetCustomerById() {
-        val first = customerRepository.findAll().get(0);
+        val first = customerRepository.findAll().getFirst();
 
         val result = customerService.getCustomerById(first.getId());
 
@@ -109,7 +109,7 @@ class CustomerServiceJpaIT {
     @Transactional
     @Rollback
     void shouldUpdateExistingCustomerById(CustomerDto customerDto) {
-        val first = customerRepository.findAll().get(0);
+        val first = customerRepository.findAll().getFirst();
 
         assertThat(first)
                 .extracting(CustomerEntity::getName, CustomerEntity::getEmail)
@@ -140,7 +140,7 @@ class CustomerServiceJpaIT {
     @Test
     @Transactional
     void shouldDeleteCustomerById() {
-        val first = customerRepository.findAll().get(0);
+        val first = customerRepository.findAll().getFirst();
 
         customerService.deleteCustomerById(first.getId());
 
