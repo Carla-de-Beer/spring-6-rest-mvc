@@ -2,24 +2,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>dev.cadebe</groupId>
     <artifactId>spring-6-rest-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-6-rest-mvc</name>
     <description>spring-6-rest-mvc</description>
+
     <properties>
         <java.version>21</java.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
+        <com.h2database>2.2.224</com.h2database>
+        <com.opencsv>5.9</com.opencsv>
+        <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
+        <maven-compiler-plugin>3.13.0</maven-compiler-plugin>
+        <mysql-connector-j>8.2.0</mysql-connector-j>
+        <org.mapstruct.version>1.6.0</org.mapstruct.version>
+        <org.apache.commons>3.17.0</org.apache.commons>
+        <org.apache.maven.plugins>3.5.0</org.apache.maven.plugins>
+        <org.jacoco>0.8.12</org.jacoco>
+        <springdoc-openapi-maven-plugin>1.4</springdoc-openapi-maven-plugin>
+        <springdoc-openapi-starter-webmvc-ui>2.6.0</springdoc-openapi-starter-webmvc-ui>
         <start-class>dev.cadebe.spring6restmvc.Spring6RestMvcApplication</start-class>
-        <!-- ClassNotFoundException: org.hibernate.dialect.MySQL57Dialect with Hibernate 6.4 : Error on upgrading to spring-boot-starter-parent 3.2.1 -->
-        <hibernate.version>6.3.2.Final</hibernate.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -47,14 +59,14 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql-connector-j}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.220</version>
+            <version>${com.h2database}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -64,7 +76,7 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.8</version>
+            <version>${com.opencsv}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -80,12 +92,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.13.0</version>
+            <version>${org.apache.commons}</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.1.0</version>
+            <version>${springdoc-openapi-starter-webmvc-ui}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -163,7 +175,7 @@
             <plugin>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>${springdoc-openapi-maven-plugin}</version>
                 <configuration>
                     <apiDocsUrl>http://localhost:8080/api-docs.yaml</apiDocsUrl>
                     <outputFileName>oa3.yml</outputFileName>
@@ -181,7 +193,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>${maven-compiler-plugin}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -204,7 +216,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>0.2.0</version>
+                            <version>${lombok-mapstruct-binding}</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
@@ -216,7 +228,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>${org.apache.maven.plugins}</version>
                 <configuration>
                     <includes>
                         <include>**/*IT.java</include>
@@ -235,7 +247,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>${org.jacoco}</version>
                 <configuration>
                     <excludes>
                         <exclude>dev/cadebe/spring6restmvc/config/**</exclude>
